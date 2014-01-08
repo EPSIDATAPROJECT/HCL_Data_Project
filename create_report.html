@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>OVR : Outil de visualisation Remera</title>
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="stylesheets/app.css">
+  <link rel="stylesheet" href="stylesheets/multi-select.css">
+
+  <script src="javascripts/modernizr.foundation.js"></script>
+</head>
+<body>
+
+ 
+  <div class="row">
+    <div class="twelve columns">
+      <h1>Remera outil de visualisation</h1>
+    </div>
+  </div>
+
+
+
+
+<form>
+  <label>Quel titre pour votre rapport ?</label>
+  <input name="txtReportName"type="text"/>
+
+  <label>Quel description pour votre rapport ?</label>
+  <textarea name='txtReportDescription'></textarea>
+
+  <div id="tableau-des-graphiques">
+
+    <table class="twelve columns">
+      <thead>
+        <tr>
+          <th>Ajouter</th>
+          <th>Titre</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+      </tbody>
+    </table>
+
+  </div>
+
+<div class="row">
+  <div class="two columns offset-by-five">
+  <!-- a recuperer par un script php pour le stock -->
+    <a class="button" onclick="create_report();">Générer rapport</a>
+  </div>
+</div>
+
+</form>
+  
+  <!-- Included JS Files (Compressed) -->
+  <script src="javascripts/jquery.js"></script>
+  <script src="javascripts/foundation.min.js"></script>
+  <script src="javascripts/jquery.multi-select.js"></script>
+  <script src="javascripts/jquery.quicksearch.js"></script>
+  <script src="javascripts/highcharts.js"></script>
+  <!-- Initialize JS Plugins -->
+  <script src="javascripts/app.js"></script>
+  <script type="text/javascript">
+
+   $(document).ready(function() {
+
+    $.getJSON("lists/charts/_list.json", function(json) {
+
+      $.each(json.charts, function (key, obj){
+
+        $.getJSON("lists/charts/"+obj.file, function(chart) {
+          console.log(chart);
+          $("#tableau-des-graphiques tbody").append("<tr><td><label><input type='checkbox' name='chk_charts' value='"+key+"'></label></td><td>"+chart.title+"</td><td>"+chart.description+"</td></tr>");
+        });
+
+      });
+
+    });
+
+   });
+
+        
+// Création du rapport.
+var create_report = function() {
+
+  //Récupère les valeurs des inputs 
+  var titre = $("input[name=txtReportName]").val();
+  var description = $("textarea[name=txtReportDescription]").val();
+  var charts = [];
+  $('input:checked[name=chk_charts]').each(function() {
+    charts.push($(this).val());
+  });
+
+  // Test si non vide
+  if (titre === '' || description === '' || charts.length === 0) {
+    // afficher message d'erreur
+  }
+  else {
+
+        $.ajax({
+                        url: 'scripts/create_report.php',
+                        type:'POST',
+ 
+                        data: {
+                             fonction:'create_report',
+                             params: {titre: titre,
+                                      description: description,
+                                      charts: charts},
+                        },
+                        success: function(data)
+                        {
+                          //a rediriger vers le rapport
+                           document.location.href="/list_report.html"
+                        }
+                    });
+
+  }
+
+
+
+
+
+};
+
+
+  </script>
+
+  
+</body>
+</html>

@@ -1,0 +1,36 @@
+{
+   "charts": [{
+        "file": "chart_20131229164100.json",
+        "tdb": true
+    },
+    {
+        "file": "chart_20131229164100_1.json",
+        "tdb": false
+    },
+    {
+        "file": "chart_20131229164100_2.json",
+        "tdb": false
+    },
+    {
+        "file": "chart_20131229164100_3.json",
+        "tdb": true
+    },
+    {
+        "file": "chart_20131229164100_4.json",
+        "tdb": false
+    },
+    {
+        "file": "chart_20131229164100_5.json",
+        "tdb": false
+    },
+    {
+        "file": "chart_20131229164100_6.json",
+        "tdb": false
+    },
+    {
+        "file": "chart_20131229164100_7.json",
+        "tdb": false
+    }
+    ]
+
+}

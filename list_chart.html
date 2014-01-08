@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>OVR : Outil de visualisation Remera</title>
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="stylesheets/app.css">
+  <link rel="stylesheet" href="stylesheets/multi-select.css">
+
+  <script src="javascripts/modernizr.foundation.js"></script>
+</head>
+<body>
+
+ 
+  <div class="row">
+    <div class="twelve columns">
+      <h1>Remera outil de visualisation</h1>
+    </div>
+  </div>
+
+
+  <div id="chart_list">
+ 
+  </div>
+
+  
+  
+  <!-- Included JS Files (Compressed) -->
+
+  <script src="javascripts/jquery.js"></script>
+  <script src="javascripts/foundation.min.js"></script>
+  <script src="javascripts/jquery.multi-select.js"></script>
+  <script src="javascripts/jquery.quicksearch.js"></script>
+  <script src="javascripts/highcharts.js"></script>
+  <script src="javascripts/jqueryFileTree.js"></script>
+  <script src="javascripts/jquery.json-2.4.min.js"></script>
+
+  <!-- Initialize JS Plugins -->
+  <script src="javascripts/app.js"></script>
+
+  <script type="text/javascript">
+
+     $(document).ready(function() {
+
+        $.getJSON("lists/charts/_list.json", function(json) {
+          var checked = '';
+          $.each(json.charts, function (key, value){
+            $.getJSON("lists/charts/"+value.file, function(chart) {
+
+              if (value.tdb)
+                  checked = 'checked';
+              else
+                  checked = '';
+
+
+              $("#chart_list").append("<div class='row'><label><input type='checkbox' id='checkbox"+key+"' onClick='addToTBD("+key+")' "+checked+"></span> Ajouter / Retirer du tableau de bord</label><div id='container_"+key+"' class='six columns'></div><div id='description_"+key+"' class='six columns'></div></div>");
+
+              $('#container_'+key).highcharts({
+                chart: {
+                    type: chart.type
+                },
+                title: {
+                    text: chart.title
+                },
+                xAxis: chart.xAxis,
+                yAxis: chart.yAxis,
+                plotOptions: chart.plotOptions,
+                series: chart.series
+              });
+               $('#description_'+key).text(chart.description);
+
+            });
+
+          });
+        });
+
+
+
+
+     // $('#container').fileTree({ root: 'lists/charts/' }, function(file) {
+     //     console.log(file);
+     // });
+     // $('#container2').fileTree({ root: 'lists/charts/' }, function(file) {
+     //     console.log(file);
+     // });
+
+     // $('#container').fileTree({ root: 'lists/charts/' }, function(file) {
+     //     console.log(file);
+     // });
+
+});
+
+// Met à jour de le fichier _list.json, en passant la valeur tbf à true.
+var addToTBD = function(key) {
+  //récupère le contenu du fichier
+  $.getJSON("lists/charts/_list.json", function(file) {
+    // passe à true ou false le champs concerné
+    if (file.charts[key].tdb === true)
+        file.charts[key].tdb = false;
+    else
+        file.charts[key].tdb = true;
+
+    // a renvoyer dans un script php en ajax pour ecrire dans le fichier
+  
+    $.ajax({
+                        url: 'scripts/update_list_chart.php',
+                        type:'POST',
+ 
+                        data: {
+                             fonction:'update_list_chart',
+                             params: {json: $.toJSON(file)},
+                        },
+                        success: function(data)
+                        {
+                           console.log(data);
+                        }
+                    });
+
+  });
+
+};
+  
+  </script>
+
+
+  
+</body>
+</html>
