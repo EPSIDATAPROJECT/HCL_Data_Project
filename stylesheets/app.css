@@ -12,16 +12,33 @@
 /* -----------------------------------------
    Shared Styles
 ----------------------------------------- */
+.banner {
+	border-bottom: 3px dotted black;
+	margin-bottom: 15px;
+	background-color: rgb(204, 179, 202);
+}
 
+body {
+	background-color: rgb(234, 217, 171);
+}
+.home_button {
+	margin-left: 50px;
+}
+
+a.button {
+	background-color: rgb(136,77,131);
+	border-color: rgb(136,77,131);
+}
+
+a.button:hover {
+	background-color: rgb(204, 179, 202);
+	border-color: rgb(204, 179, 202);
+}
 
 
 /* -----------------------------------------
    Page Index
 ----------------------------------------- */
-#home_content{
-	margin-top: 50px;
-}
-
 #home_content a.large.radius.button{
 	width: 100%;
 
@@ -29,13 +46,16 @@
 #home_content .description{
 	margin-top: 10px;
 	text-align: justify;
-	border: 2px dotted black;
+	border: 2px dotted rgb(136,77,131);
 	padding: 5px;
+	background-color: rgb(204, 179, 202);
 }
 
 #home_content a {
 	font-size: 25px;
 }
+
+
 /* -----------------------------------------
    Page Name 2
 ----------------------------------------- */
