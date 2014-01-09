@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 
+
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
@@ -20,148 +21,65 @@
 </head>
 <body>
 
- 
   <div class="row">
-    <div class="twelve columns">
+      <div class="four columns centered">
+      <img src="images/logo-remera.png"></div>
+  </div>
+  <div class="row centered">
+    <div class="nine columns centered">
       <h1>Remera outil de visualisation</h1>
     </div>
   </div>
 
 
-<div id="modalRapport" class="reveal-modal">  
-  <h2>Rapport</h2>  
-   <a class="radius button" href="create_report.html">
-      <img src="images/icons/PNG/64x64/document-add.png" alt="Créer un rapport"><br>Créer un rapport</a>
+<div id="home_content">  
+  <div class="row">
+      <div class="three columns offset-by-one">
 
-    <a class="radius button" href="list_report.html">
-      <img src="images/icons/PNG/64x64/document.png" alt="Créer un rapport"><br>Ouvrir un rapport</a>
-  <a class="close-reveal-modal">×</a>  
-</div> 
+        <div class="row">
+          <a class="large radius button" href="table.html">
+            <img src="images/Table-256.png" alt="Tableau">Tableau</a>
+        </div>
 
-<div id="modalDisposition" class="reveal-modal">  
-  <h2>Disposition</h2>  
-   <p>
-     Ici se trouvera le changement de disposition pour le tableau de bord
-   </p>
-  <a class="close-reveal-modal">×</a>  
-</div> 
+        <div class="row description">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, iure, maxime magnam similique dolore quibusdam provident illo porro itaque sequi asperiores debitis tenetur labore at amet laboriosam ratione quidem esse.
+        </div>
+      </div>
 
+      <div class="three columns offset-by-one">
 
- <!--  <div class="row">
-    <div class="six columns offset-by-three middle"> 
-    <p>
-      <a class="large radius button" href="create_chart.html">Créer un graphique</a></p><p>
-      <a class="large radius button" href="list_chart.html">Listes des graphiques</a></p><p>
-      <a class="large radius button" href="#">Créer un rapport</a></p>
+        <div class="row">
+          <a class="large radius button" href="chart.html">
+            <img src="images/Chart-Customization-256.png" alt="Graphique">Graphique</a>
+        </div>
+
+        <div class="row description">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis, minima, ducimus provident commodi voluptatibus pariatur quidem tempora perspiciatis sed dolorum optio ipsam consequatur dolor quisquam beatae eligendi similique dolores illo?
+        </div>
+      </div>
+
+      <div class="three columns offset-by-one">
+
+        <div class="row">
+          <a class="large radius button" href="map.html">
+            <img src="images/Map-256.png" alt="Carte">Carte</a>
+        </div>
+
+        <div class="row description">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Temporibus deleniti architecto eos. Numquam, minus, ipsa, soluta, voluptatum vero nulla natus dolor illo eos nesciunt iure cumque qui consectetur eveniet facere.</div>
+      </div>
     </div>
-  </div> -->
-<div class="row">
-
-  <div class="eleven columns">
-    <a class="radius button" href="create_chart.html">
-      <img src="images/icons/PNG/64x64/plus.png" alt="Ajouter un graphique"><br>Ajouter un graphique</a>
-
-    <a class="radius button" data-reveal-id="modalRapport" href="#">
-      <img src="images/icons/PNG/64x64/document-add.png" alt="Créer un rapport"><br>Rapports</a></div>
-
-  <div class="one column">
-    <a class="radius button"  data-reveal-id="modalDisposition" href="#">
-      <img src="images/icons/PNG/64x64/grid.png" alt="Disposition du tableau de bord"><br> Changer disposition</a> </div>
-
-</div>
-
-
-
-  <div id="tableau-de-bord">
-    <!-- <div class="row">
-      <div class="four columns">
-      <img src="images/no-chart.jpg" width="100%" height="100%">
-      Nombre d'enfant tuberculé par HCL. Dernière mis à jour le ##/##/#####</div>
-      <div class="four columns"><img src="images/no-chart.jpg" width="100%" height="100%"></div>
-      <div class="four columns"><img src="images/no-chart.jpg" width="100%" height="100%"></div>
-    </div> -->
   </div>
 
-  
   
   <!-- Included JS Files (Compressed) -->
   <script src="javascripts/jquery.js"></script>
   <script src="javascripts/foundation.min.js"></script>
   <script src="javascripts/jquery.multi-select.js"></script>
   <script src="javascripts/jquery.quicksearch.js"></script>
-  <script src="javascripts/highcharts.js"></script>
   <!-- Initialize JS Plugins -->
   <script src="javascripts/app.js"></script>
-  <script type="text/javascript">
 
-       $(document).ready(function() {
-
-        $.getJSON("lists/charts/_list.json", function(json) {
-        
-          $.each(json.charts, function (key, obj){
-            if( obj.tdb === true) {
-
-              $.getJSON("lists/charts/"+obj.file, function(chart) {
-
-                $("#tableau-de-bord").append("<div class='row'><label><div id='container_"+key+"' class='six columns'></div><div id='description_"+key+"' class='six columns'></div></div>");
-
-                $('#container_'+key).highcharts({
-                  chart: {
-                      type: chart.type
-                  },
-                  title: {
-                      text: chart.title
-                  },
-                  xAxis: chart.xAxis,
-                  yAxis: chart.yAxis,
-                  plotOptions: chart.plotOptions,
-                  series: chart.series
-                });
-                 $('#description_'+key).text(chart.description);
-
-              });
-            }
-
-          });
-        });
-
-
-
-});
-
-  // maximum 4 colonnes
-  // ligne illimité
-  var change_disposition = function(ligne, colonne) {
-    $('.container.tdb').empty();
-    var class_column = "two columns";
-
-    if (colonne === 1) class_column = "twelves column"
-    else if (colonne === 2) class_column = "six columns"
-    else if (colonne === 3) class_column = "four columns"
-    else if (colonne === 4) class_column = "three columns"
-    else alert("Le nombre de colonne maximum autorisé est de 4");
-
-
-    
-    if (colonne < 5){
-      for (var i = ligne ; i > 0; i--) {
-        // Création d'une nouvelle ligne dans container tdb
-        var string_ligne = "<div class='row'></div>";
-        $('.container.tdb').append(string_ligne);
-
-        for (var j = colonne; j > 0; j--) {
-          // selection de la derniere ligne créer et ajout des graphiques
-          var string_colonne = "<div class='"+class_column+"'> <img src='images/no-chart.jpg' width='100%' height='100%'><br> ###TITLE### Dernière mis à jour le ##/##/####</div>";
-          $('.container.tdb > .row').last().append(string_colonne);
-
-          //a rajouter charger les graphiquesch
-
-            
-        };    
-      };
-    }
-    
-  }
 
   </script>
 
