@@ -16,12 +16,26 @@
 
 
 /* -----------------------------------------
-   Page Name 1
+   Page Index
 ----------------------------------------- */
+#home_content{
+	margin-top: 50px;
+}
 
+#home_content a.large.radius.button{
+	width: 100%;
 
+}
+#home_content .description{
+	margin-top: 10px;
+	text-align: justify;
+	border: 2px dotted black;
+	padding: 5px;
+}
 
-
+#home_content a {
+	font-size: 25px;
+}
 /* -----------------------------------------
    Page Name 2
 ----------------------------------------- */
