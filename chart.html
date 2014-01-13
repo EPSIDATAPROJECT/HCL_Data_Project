@@ -39,7 +39,9 @@
 
   <div id="chart_content">
     <div class="row">
-      <div id="chart_container" class="eight columns"></div>
+      <div id="chart_container" class="eight columns">
+        
+      </div>
       <div class="four columns">
 
 
@@ -52,10 +54,20 @@
     <div id="malformation_content" class="content">
       <input type="text" id="search_malformation" placeholder="Rechercher">
 
-
+      
       <label for="Y74"><input type="checkbox" id="Y74" class="checkbox"> Quelque chose</label>
       <label for="Y75"><input type="checkbox" id="Y75" class="checkbox"> Un truc</label>
       <label for="Y76"><input type="checkbox" id="Y76" class="checkbox"> Un autre truc</label>
+
+      <label for="Y77"><input type="checkbox" id="Y77" class="checkbox"> Y77</label>
+      <label for="Y79"><input type="checkbox" id="Y79" class="checkbox"> Y79</label>
+      <label for="Y83"><input type="checkbox" id="Y83" class="checkbox"> Y83</label>
+      <label for="Y84"><input type="checkbox" id="Y84" class="checkbox"> Y84</label>
+      <label for="Y86"><input type="checkbox" id="Y86" class="checkbox"> Y86</label>
+      <label for="Y90"><input type="checkbox" id="Y90" class="checkbox"> Y90</label>
+      <label for="Y97"><input type="checkbox" id="Y97" class="checkbox"> Y97</label>
+      <label for="Y98"><input type="checkbox" id="Y98" class="checkbox"> Y98</label>
+      <label for="Y102"><input type="checkbox" id="Y102" class="checkbox"> Y102</label>
     </div>
   </li>
 </ul>
@@ -77,9 +89,16 @@
   <!-- Initialize JS Plugins -->
   <script src="javascripts/app.js"></script>
   <script type="text/javascript">
+ // Decoche les options lors d'un raffraichissement de la page    
+$('input:checked[type=checkbox]').attr('checked', false);
 
 
-   
+$(window).bind('beforeunload', function() {
+    var nb_check =  $('input:checked[type=checkbox]').length; 
+    if (nb_check > 0) {
+      return 'Are you really sure ?';
+    }
+});
 
 var process_chart = function () {
 var nb_check =  $('input:checked[type=checkbox]').length; 
@@ -98,9 +117,8 @@ $('input:checked[type=checkbox]').each(function() {
 
  parametre+='}';
 
-console.log(parametre);
  var params = $.parseJSON(parametre);
- console.log(params);
+
 
 
 $.ajax({
@@ -113,27 +131,25 @@ $.ajax({
         success: function(data)
         {
           
-           var test = $.parseJSON(data);
+           var data_json = $.parseJSON(data);
 
 
            var donnee = [];
            var categories = [];
-            $.each(test, function (key, value){
+            $.each(data_json, function (key, value){
               var name = $('label[for='+key+']')[0].textContent;
               donnee.push({name: name, y: value});
               categories.push(name);
             });
 
-            console.log(donnee);
             donnee.sort(sortByValue);
-            console.log(donnee);
 
                $('#chart_container').highcharts({
                 chart: {
                     type: 'bar'
                 },
                 title: {
-                    text: 'Fruit Consumption'
+                    text: 'Malformations'
                 },
                 xAxis: {
                     categories: categories
@@ -163,6 +179,7 @@ function sortByValue(a,b) {
 
 $('#malformation_content').find('input[type=checkbox]').click(function(){
     //$('#malformations').find('input[type=checkbox]');
+
     var labels = $('#malformation_content').find('label');
     var tags = [];
 
@@ -199,6 +216,7 @@ function searchOptions(idAccordeon, text) {
   });
 
 }
+
 
   </script>
 
