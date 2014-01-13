@@ -39,7 +39,11 @@
 
   <div id="chart_content">
     <div class="row">
-      va contenir la visualisation en graphique
+      <div id="chart_container" class="eight columns"></div>
+      <div class="four columns">
+        <a class="radius button" onclick="click_button();">Générer graphique</a>
+      </div>
+      
     </div>
   </div>
 
@@ -49,9 +53,70 @@
   <script src="javascripts/foundation.min.js"></script>
   <script src="javascripts/jquery.multi-select.js"></script>
   <script src="javascripts/jquery.quicksearch.js"></script>
+  <script src="javascripts/highcharts.js"></script>
   <!-- Initialize JS Plugins -->
   <script src="javascripts/app.js"></script>
+  <script type="text/javascript">
 
+
+   
+
+var click_button = function () {
+
+console.log("test");
+$.ajax({
+        url: 'request_csv.php',
+        type:'POST',
+        data: {
+             fonction:'request',
+             params: {'Y76': '','Y75': '','Y74': '' },
+        },
+        success: function(data)
+        {
+          
+           var test = $.parseJSON(data);
+
+
+           var donnee = [];
+            $.each(test, function (key, value){
+              donnee.push({name: key, y: value});
+            });
+
+            console.log(donnee);
+            donnee.sort(sortByValue);
+            console.log(donnee);
+
+               $('#chart_container').highcharts({
+                chart: {
+                    type: 'pie'
+                },
+                title: {
+                    text: 'Fruit Consumption'
+                },
+                xAxis: {
+                    categories: ['Apples', 'Bananas', 'Oranges']
+                },
+                yAxis: {
+                    title: {
+                        text: 'Fruit eaten'
+                    }
+                },
+                series: [{
+                  type: 'pie',
+                  name: 'Browser share',
+                  data: donnee
+                }]
+            });
+        }
+    });
+
+}
+
+function sortByValue(a,b) {
+   var x = a.y;
+    var y = b.y;
+    return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+}
 
   </script>
 
