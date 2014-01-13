@@ -47,8 +47,12 @@
   <li class="active">
     <div class="title">
       <h5>Malformations</h5>
+      <div id="malformation_tag"></div>
     </div>
-    <div class="content">
+    <div id="malformation_content" class="content">
+      <input type="text" id="search_malformation" placeholder="Rechercher">
+
+
       <label for="Y74"><input type="checkbox" id="Y74" class="checkbox"> Quelque chose</label>
       <label for="Y75"><input type="checkbox" id="Y75" class="checkbox"> Un truc</label>
       <label for="Y76"><input type="checkbox" id="Y76" class="checkbox"> Un autre truc</label>
@@ -113,9 +117,11 @@ $.ajax({
 
 
            var donnee = [];
+           var categories = [];
             $.each(test, function (key, value){
               var name = $('label[for='+key+']')[0].textContent;
               donnee.push({name: name, y: value});
+              categories.push(name);
             });
 
             console.log(donnee);
@@ -124,13 +130,13 @@ $.ajax({
 
                $('#chart_container').highcharts({
                 chart: {
-                    type: 'pie'
+                    type: 'bar'
                 },
                 title: {
                     text: 'Fruit Consumption'
                 },
                 xAxis: {
-                    categories: ['Apples', 'Bananas', 'Oranges']
+                    categories: categories
                 },
                 yAxis: {
                     title: {
@@ -152,6 +158,46 @@ function sortByValue(a,b) {
    var x = a.y;
     var y = b.y;
     return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+}
+
+
+$('#malformation_content').find('input[type=checkbox]').click(function(){
+    //$('#malformations').find('input[type=checkbox]');
+    var labels = $('#malformation_content').find('label');
+    var tags = [];
+
+    $.each(labels, function (key, label){
+        if(label.childNodes[0].checked)
+            tags.push(label.textContent);
+    });
+
+    $('.accordion').find('#malformation_tag').empty();
+    $.each(tags, function (key, label) {
+        $('.accordion').find('#malformation_tag').append('<span class="label">'+label+'</span> ');  
+    });
+  
+});
+
+
+
+$('#search_malformation').keypress(function() {
+  searchOptions('#malformation_content', $(this).val());
+});
+
+
+function searchOptions(idAccordeon, text) {
+ var labels = $(idAccordeon).find('label');
+ var reg = new RegExp(text,"g");
+
+ $.each(labels, function (key, label){
+
+    if (label.textContent.match(reg))
+      $(this).show();
+    else 
+        $(this).hide();
+      
+  });
+
 }
 
   </script>
