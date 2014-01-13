@@ -41,7 +41,23 @@
     <div class="row">
       <div id="chart_container" class="eight columns"></div>
       <div class="four columns">
-        <a class="radius button" onclick="click_button();">Générer graphique</a>
+
+
+<ul class="accordion">
+  <li class="active">
+    <div class="title">
+      <h5>Malformations</h5>
+    </div>
+    <div class="content">
+      <label for="Y74"><input type="checkbox" id="Y74" class="checkbox"> Quelque chose</label>
+      <label for="Y75"><input type="checkbox" id="Y75" class="checkbox"> Un truc</label>
+      <label for="Y76"><input type="checkbox" id="Y76" class="checkbox"> Un autre truc</label>
+    </div>
+  </li>
+</ul>
+
+
+        <a class="radius button" onclick="process_chart();">Générer graphique</a>
       </div>
       
     </div>
@@ -61,15 +77,34 @@
 
    
 
-var click_button = function () {
+var process_chart = function () {
+var nb_check =  $('input:checked[type=checkbox]').length; 
+var parametre = '{';
 
-console.log("test");
+$('input:checked[type=checkbox]').each(function() {
+
+    if(nb_check === 1) {
+      parametre += '"'+$(this)[0].id+'":""';
+    } else {
+      parametre += '"'+$(this)[0].id+'":"",';
+    }
+    nb_check--;
+  });
+
+
+ parametre+='}';
+
+console.log(parametre);
+ var params = $.parseJSON(parametre);
+ console.log(params);
+
+
 $.ajax({
         url: 'request_csv.php',
         type:'POST',
         data: {
              fonction:'request',
-             params: {'Y76': '','Y75': '','Y74': '' },
+             params: params,
         },
         success: function(data)
         {
@@ -79,7 +114,8 @@ $.ajax({
 
            var donnee = [];
             $.each(test, function (key, value){
-              donnee.push({name: key, y: value});
+              var name = $('label[for='+key+']')[0].textContent;
+              donnee.push({name: name, y: value});
             });
 
             console.log(donnee);
