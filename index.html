@@ -16,27 +16,43 @@
   <link rel="stylesheet" href="stylesheets/foundation.min.css">
   <link rel="stylesheet" href="stylesheets/app.css">
   <link rel="stylesheet" href="stylesheets/multi-select.css">
+  <link rel="stylesheet" href="stylesheets/introjs.css">
 
   <script src="javascripts/modernizr.foundation.js"></script>
 </head>
 <body>
 
-  <div class="banner">
+  <div class="banner ">
+
+
     <div class="row">
         <div class="four columns centered">
         <img src="images/logo-remera.png"></div>
     </div>
     <div class="row centered">
       <div class="nine columns centered">
-        <h1>Remera outil de visualisation</h1>
+        <h1 id="data-step-1">Remera outil de visualisation</h1>
       </div>
     </div>
   </div>
 
+  <div id="tourModal" class="reveal-modal">
+    <h2>This is a modal.</h2>
+    <p>
+      Reveal makes these very easy to summon and dismiss. The close button is simple an anchor with a unicode 
+      character icon and a class of <code>close-reveal-modal</code>. Clicking anywhere outside the modal will 
+      also dismiss it.
 
-<div id="home_content">  
+      <a class="radius button red close-reveal-modal" onclick="tour_close();">Non, jamais</a>
+      <a class="radius button orange close-reveal-modal">Pas maintenant</a>
+      <a class="radius button green close-reveal-modal" onclick="tour_go();">Faire le tour</a>
+    </p>
+  </div>
+
+
+<div id="home_content" >  
   <div class="row">
-      <div class="three columns offset-by-one">
+      <div class="three columns offset-by-one" id="data-step-2">
 
         <div class="row">
           <a class="large radius button" href="table.html">
@@ -48,7 +64,7 @@
         </div>
       </div>
 
-      <div class="three columns offset-by-one">
+      <div class="three columns offset-by-one" id="data-step-3">
 
         <div class="row">
           <a class="large radius button" href="chart.html">
@@ -60,7 +76,7 @@
         </div>
       </div>
 
-      <div class="three columns offset-by-one">
+      <div class="three columns offset-by-one" id="data-step-4" >
 
         <div class="row">
           <a class="large radius button" href="map.html">
@@ -73,16 +89,111 @@
     </div>
   </div>
 
+
+  <div class="footer">
+    <div class="row"> 
+      <div class="one column centered">
+        <a id="remind_tour_button" class="tiny radius button" onclick="tour_go();">Visite guidée</a>
+      </div> 
+    </div>
+  </div>
+
   
   <!-- Included JS Files (Compressed) -->
   <script src="javascripts/jquery.js"></script>
   <script src="javascripts/foundation.min.js"></script>
   <script src="javascripts/jquery.multi-select.js"></script>
   <script src="javascripts/jquery.quicksearch.js"></script>
+  <script src="javascripts/intro.min.js"></script>
   <!-- Initialize JS Plugins -->
   <script src="javascripts/app.js"></script>
 
+  <script type="text/javascript">
+    $(window).load(function(){
+      $.getJSON("param.json", function(json) {
+        console.log(json.tour);
+        if (json.tour === "true" &&  !(RegExp('multipage_end', 'gi').test(window.location.search))) {
+          $('#tourModal').reveal();
+        }
+      });
 
+    });
+
+    function tour_close() {
+       $.getJSON("param.json", function(json) {
+        json.tour = false;
+        $.ajax({
+          url: 'maj_param.php',
+          type:'POST',
+
+          data: {
+               fonction:'maj_param',
+               params: {json: json},
+          },
+          success: function(data)
+          {
+            console.log(data);
+            var intro = introJs();
+            intro.setOptions({
+              showStepNumbers : false,
+              showBullets : false,
+              steps : [
+              {
+                element: '#remind_tour_button',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton.",
+                position : 'top'
+              }
+              ]});
+            intro.start();
+          }
+        });
+
+      });
+
+
+    }
+
+    function tour_go() {
+      //introJs().setOption({'showStepNumbers' : false}).start();
+      var intro = introJs();
+        intro.setOptions({
+        showStepNumbers : false,
+        showBullets : false,
+        steps : [
+              {
+                element: '#data-step-1',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton."
+              },
+              {
+                element: '#data-step-2',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton.",
+                position : 'left'
+              },
+              {
+                element: '#data-step-3',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton.",
+                position : 'left'
+              },
+              {
+                element: '#data-step-4',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton.",
+                position : 'left'
+              },
+              {
+                element: '#data-step-3',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton.",
+                position : 'left'
+              },
+              ]});
+            intro.start().oncomplete(function() {
+              window.location.href = 'chart.html?multipage=true';
+            });
+            
+    }
+
+    if (RegExp('multipage_end', 'gi').test(window.location.search)) {
+        tour_close();
+    }
   </script>
 
   

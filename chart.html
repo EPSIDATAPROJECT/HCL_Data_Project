@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="stylesheets/foundation.min.css">
   <link rel="stylesheet" href="stylesheets/app.css">
   <link rel="stylesheet" href="stylesheets/multi-select.css">
+  <link rel="stylesheet" href="stylesheets/introjs.css">
 
   <script src="javascripts/modernizr.foundation.js"></script>
 </head>
@@ -28,7 +29,7 @@
     </div>
     <div class="row centered">
       <div class="nine columns centered">
-        <h1>Remera outil de visualisation</h1>
+        <h1 id="data-step-1">Visualisation graphique</h1>
       </div>
     </div>
   </div>
@@ -45,35 +46,37 @@
       <div class="four columns">
 
 
-<ul class="accordion">
+<ul id="data-step-2" class="accordion">
   <li class="active">
     <div class="title">
-      <h5>Malformations</h5>
+      <h5 id="data-step-3">Malformations</h5>
       <div id="malformation_tag"></div>
     </div>
     <div id="malformation_content" class="content">
-      <input type="text" id="search_malformation" placeholder="Rechercher">
+      <input type="text" id="search_malformation" class="accordion_content_search" placeholder="Rechercher">
 
       
-      <label for="Y74"><input type="checkbox" id="Y74" class="checkbox"> Quelque chose</label>
-      <label for="Y75"><input type="checkbox" id="Y75" class="checkbox"> Un truc</label>
-      <label for="Y76"><input type="checkbox" id="Y76" class="checkbox"> Un autre truc</label>
+      <div id="data-step-5" class="accordion_content_checkbox">
+        <label for="Y74"><input type="checkbox" id="Y74" class="checkbox"> Quelque chose</label>
+        <label for="Y75"><input type="checkbox" id="Y75" class="checkbox"> Un truc</label>
+        <label for="Y76"><input type="checkbox" id="Y76" class="checkbox"> Un autre truc</label>
 
-      <label for="Y77"><input type="checkbox" id="Y77" class="checkbox"> Y77</label>
-      <label for="Y79"><input type="checkbox" id="Y79" class="checkbox"> Y79</label>
-      <label for="Y83"><input type="checkbox" id="Y83" class="checkbox"> Y83</label>
-      <label for="Y84"><input type="checkbox" id="Y84" class="checkbox"> Y84</label>
-      <label for="Y86"><input type="checkbox" id="Y86" class="checkbox"> Y86</label>
-      <label for="Y90"><input type="checkbox" id="Y90" class="checkbox"> Y90</label>
-      <label for="Y97"><input type="checkbox" id="Y97" class="checkbox"> Y97</label>
-      <label for="Y98"><input type="checkbox" id="Y98" class="checkbox"> Y98</label>
-      <label for="Y102"><input type="checkbox" id="Y102" class="checkbox"> Y102</label>
+        <label for="Y77"><input type="checkbox" id="Y77" class="checkbox"> Y77</label>
+        <label for="Y79"><input type="checkbox" id="Y79" class="checkbox"> Y79</label>
+        <label for="Y83"><input type="checkbox" id="Y83" class="checkbox"> Y83</label>
+        <label for="Y84"><input type="checkbox" id="Y84" class="checkbox"> Y84</label>
+        <label for="Y86"><input type="checkbox" id="Y86" class="checkbox"> Y86</label>
+        <label for="Y90"><input type="checkbox" id="Y90" class="checkbox"> Y90</label>
+        <label for="Y97"><input type="checkbox" id="Y97" class="checkbox"> Y97</label>
+        <label for="Y98"><input type="checkbox" id="Y98" class="checkbox"> Y98</label>
+        <label for="Y102"><input type="checkbox" id="Y102" class="checkbox"> Y102</label>
+      </div>
     </div>
   </li>
 </ul>
 
 
-        <a class="radius button" onclick="process_chart();">Générer graphique</a>
+        <a id="data-step-6"class="radius button" onclick="process_chart();">Générer graphique</a>
       </div>
       
     </div>
@@ -86,11 +89,13 @@
   <script src="javascripts/jquery.multi-select.js"></script>
   <script src="javascripts/jquery.quicksearch.js"></script>
   <script src="javascripts/highcharts.js"></script>
+  <script src="javascripts/intro.min.js"></script>
   <!-- Initialize JS Plugins -->
   <script src="javascripts/app.js"></script>
   <script type="text/javascript">
  // Decoche les options lors d'un raffraichissement de la page    
 $('input:checked[type=checkbox]').attr('checked', false);
+$('.accordion_content_search').val('');
 
 
 $(window).bind('beforeunload', function() {
@@ -177,7 +182,7 @@ function sortByValue(a,b) {
 }
 
 
-$('#malformation_content').find('input[type=checkbox]').click(function(){
+$('#malformation_content').find('input[type=checkbox]').bind('change',function(){
     //$('#malformations').find('input[type=checkbox]');
 
     var labels = $('#malformation_content').find('label');
@@ -197,15 +202,20 @@ $('#malformation_content').find('input[type=checkbox]').click(function(){
 
 
 
-$('#search_malformation').keypress(function() {
+$('#search_malformation').bind('keyup',function(e) {
   searchOptions('#malformation_content', $(this).val());
+
+   var code = e.keyCode || e.which;
+   if(code == 13) { //Enter keycode
+     select_only_one('#malformation_content')
+   }
 });
 
 
 function searchOptions(idAccordeon, text) {
  var labels = $(idAccordeon).find('label');
  var reg = new RegExp(text,"g");
-
+  
  $.each(labels, function (key, label){
 
     if (label.textContent.match(reg))
@@ -217,7 +227,67 @@ function searchOptions(idAccordeon, text) {
 
 }
 
+function select_only_one(idAccordeon) {
+  var labels = $(idAccordeon).find('input:visible[type=checkbox]');
 
+  if (labels.length === 1) {
+      if (labels.prop('checked'))
+        labels.prop('checked', false);
+      else 
+        labels.prop('checked', true);
+  }
+
+
+  $('#malformation_content').find('input[type=checkbox]').trigger('change');
+
+}
+
+
+          if (RegExp('multipage', 'gi').test(window.location.search)) {
+      var intro = introJs();
+        intro.setOptions({
+        showStepNumbers : false,
+        showBullets : false,
+        steps : [
+              {
+                element: '#data-step-1',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton."
+              },
+              {
+                element: '#data-step-2',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton.",
+                position : 'left'
+              },
+              {
+                element: '#data-step-3',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton.",
+                position : 'left'
+              },
+              {
+                element: '#search_malformation',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton.",
+                position : 'left'
+              },
+              {
+                element: '#data-step-5',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton.",
+                position : 'left'
+              },
+              {
+                element: '#data-step-6',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton.",
+                position : 'left'
+              },
+              {
+                element: '#chart_container',
+                intro: "Si vous souhaitez faire une visite guidée ultérieurement, vous pouver toujours cliquer sur ce bouton.",
+                position : 'left'
+              }
+              ]});
+            intro.start().oncomplete(function() {
+              window.location.href = 'index.html?multipage_end=true';
+            });
+    }
   </script>
 
   

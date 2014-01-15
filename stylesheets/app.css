@@ -17,7 +17,9 @@
 	margin-bottom: 15px;
 	background-color: rgb(204, 179, 202);
 }
-
+.banner {
+	text-align: center;
+}
 body {
 	background-color: rgb(234, 217, 171);
 }
@@ -33,6 +35,31 @@ a.button {
 a.button:hover {
 	background-color: rgb(204, 179, 202);
 	border-color: rgb(204, 179, 202);
+}
+
+a.button.green{
+	background-color: green;
+}a.button.orange {
+	background-color: orange;
+}a.button.red {
+	background-color: red;
+}
+
+#remind_tour_button {
+	background-color: rgb(204, 179, 202);
+	color: rgb(136,77,131);
+}
+
+.accordion_content_checkbox{
+	max-height : 165px;
+	overflow: scroll;
+
+} 
+
+.footer {
+	margin-top: 15px;
+	padding: 10px;
+	background-color: rgb(136,77,131);
 }
 
 
