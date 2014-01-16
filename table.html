@@ -105,7 +105,7 @@
 
 
         <a class="radius button" onclick="process_table();">Générer tableau</a>
-        <a class="radius button" onclick="process_chart();">Voir graphique</a>
+        <a class="radius button" onclick="process_chart();">Voir sous forme graphique</a>
       </div>
       
     </div>
@@ -150,29 +150,30 @@ $('input:checked[type=checkbox]').each(function() {
  parametre+='}';
 
  var params = $.parseJSON(parametre);
-
  location.href = 'chart.html?query=' + JSON.stringify(params);
 
 };
 
-var process_table = function () {
-var nb_check =  $('input:checked[type=checkbox]').length; 
-var parametre = '{';
+var process_table = function (params) {
+  if (!params) {
+    var nb_check =  $('input:checked[type=checkbox]').length; 
+    var parametre = '{';
 
-$('input:checked[type=checkbox]').each(function() {
+    $('input:checked[type=checkbox]').each(function() {
 
-    if(nb_check === 1) {
-      parametre += '"'+$(this)[0].id+'":""';
-    } else {
-      parametre += '"'+$(this)[0].id+'":"",';
-    }
-    nb_check--;
-  });
+        if(nb_check === 1) {
+          parametre += '"'+$(this)[0].id+'":""';
+        } else {
+          parametre += '"'+$(this)[0].id+'":"",';
+        }
+        nb_check--;
+      });
 
 
- parametre+='}';
+   parametre+='}';
 
- var params = $.parseJSON(parametre);
+   var params = $.parseJSON(parametre);
+}
 
 
 
@@ -225,6 +226,24 @@ function sortByValue(a,b) {
     return ((x > y) ? -1 : ((x < y) ? 1 : 0));
 }
 
+//fonctions qui écoute le changement des checkbox
+//Pour celles qui sont cochés, les rajoutes comme tag dans le titre du volet de l'accordeon
+$('#malformation_content').find('input[type=checkbox]').bind('change',function(){
+
+    var labels = $('#malformation_content').find('label');
+    var tags = [];
+
+    $.each(labels, function (key, label){
+        if(label.childNodes[0].checked)
+            tags.push(label.textContent);
+    });
+
+    $('.accordion').find('#malformation_tag').empty();
+    $.each(tags, function (key, label) {
+        $('.accordion').find('#malformation_tag').append('<span class="label">'+label+'</span> ');  
+    });
+  
+});
 
 $('#malformation_content').find('input[type=checkbox]').click(function(){
     //$('#malformations').find('input[type=checkbox]');
@@ -268,6 +287,28 @@ function searchOptions(idAccordeon, text) {
 
 }
 
+
+// fonction permettant d'afficher les données à partir d'une requete d'une autre page
+if (RegExp('query', 'gi').test(window.location.search)) {
+
+  //récupérer les paramètres
+  var regex = new RegExp("[\\?&]query=([^&#]*)"),
+      results = regex.exec(location.search),
+      query = decodeURIComponent(results[1].replace(/\+/g, " ")),
+      json = $.parseJSON(query);
+
+    // Checker les checkbox
+    $.each(json, function(key , value) {
+      console.log(key);
+      $('input#' + key + '[type=checkbox]').prop('checked', 'checked');
+    // trigger pour appeler l'event change sur les checkbox
+      $('input#' + key + '[type=checkbox]').trigger('change');
+
+    })
+
+    // Création requete
+    process_table($.parseJSON(query));
+}
 
   </script>
 

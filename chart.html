@@ -113,6 +113,7 @@
 
 
         <a id="data-step-6"class="radius button" onclick="process_chart();">Générer graphique</a>
+        <a class="radius button" onclick="process_table();">Voir sous forme de table</a>
       </div>
       
     </div>
@@ -210,6 +211,29 @@ $.ajax({
     });
 
 }
+
+
+var process_table = function () {
+  var nb_check =  $('input:checked[type=checkbox]').length; 
+var parametre = '{';
+
+$('input:checked[type=checkbox]').each(function() {
+
+    if(nb_check === 1) {
+      parametre += '"'+$(this)[0].id+'":""';
+    } else {
+      parametre += '"'+$(this)[0].id+'":"",';
+    }
+    nb_check--;
+  });
+
+
+ parametre+='}';
+
+ var params = $.parseJSON(parametre);
+ location.href = 'table.html?query=' + JSON.stringify(params);
+
+};
 
 // fonction de tri pour afficher les valeurs dans l'ordre croissant
 function sortByValue(a,b) {
@@ -317,12 +341,20 @@ if (RegExp('query', 'gi').test(window.location.search)) {
   //récupérer les paramètres
   var regex = new RegExp("[\\?&]query=([^&#]*)"),
       results = regex.exec(location.search),
-      query = decodeURIComponent(results[1].replace(/\+/g, " "));
+      query = decodeURIComponent(results[1].replace(/\+/g, " ")),
+      json = $.parseJSON(query);
 
-      process_chart($.parseJSON(query));
+    // Checker les checkbox
+    $.each(json, function(key , value) {
+      console.log(key);
+      $('input#' + key + '[type=checkbox]').prop('checked', 'checked');
+      // trigger pour appeler l'event change sur les checkbox
+      $('input#' + key + '[type=checkbox]').trigger('change');
+    })
 
 
-
+    // Création requete
+    process_chart($.parseJSON(query));
 }
           if (RegExp('multipage', 'gi').test(window.location.search)) {
       var intro = introJs();
