@@ -86,5 +86,12 @@ a.button.green{
 /* -----------------------------------------
    Page Name 2
 ----------------------------------------- */
+#chart_content {
+	margin-top: 10px;
+}
 
+#chart_container {
+	background-color: white;
+	padding: 5px
+}
 

@@ -104,7 +104,8 @@
 </ul>
 
 
-        <a class="radius button" onclick="process_table();">Générer graphique</a>
+        <a class="radius button" onclick="process_table();">Générer tableau</a>
+        <a class="radius button" onclick="process_chart();">Voir graphique</a>
       </div>
       
     </div>
@@ -130,6 +131,29 @@ $(window).bind('beforeunload', function() {
       return 'Are you really sure ?';
     }
 });
+
+var process_chart = function () {
+  var nb_check =  $('input:checked[type=checkbox]').length; 
+var parametre = '{';
+
+$('input:checked[type=checkbox]').each(function() {
+
+    if(nb_check === 1) {
+      parametre += '"'+$(this)[0].id+'":""';
+    } else {
+      parametre += '"'+$(this)[0].id+'":"",';
+    }
+    nb_check--;
+  });
+
+
+ parametre+='}';
+
+ var params = $.parseJSON(parametre);
+
+ location.href = 'chart.html?query=' + JSON.stringify(params);
+
+};
 
 var process_table = function () {
 var nb_check =  $('input:checked[type=checkbox]').length; 

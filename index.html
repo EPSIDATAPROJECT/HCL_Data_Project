@@ -68,7 +68,7 @@
 
         <div class="row">
           <a class="large radius button" href="chart.html">
-            <img src="images/Chart-Customization-256.png" alt="Graphique">Graphique</a>
+            <img src="images/Chart-Customization-256.png"  alt="Graphique">Graphique</a>
         </div>
 
         <div class="row description">
@@ -88,7 +88,6 @@
       </div>
     </div>
   </div>
-
 
   <div class="footer">
     <div class="row"> 
@@ -111,7 +110,6 @@
   <script type="text/javascript">
     $(window).load(function(){
       $.getJSON("param.json", function(json) {
-        console.log(json.tour);
         if (json.tour === "true" &&  !(RegExp('multipage_end', 'gi').test(window.location.search))) {
           $('#tourModal').reveal();
         }
@@ -144,7 +142,9 @@
                 position : 'top'
               }
               ]});
-            intro.start();
+            intro.start().oncomplete(function() {
+              location.href = 'index.html';
+            });
           }
         });
 
@@ -193,6 +193,7 @@
 
     if (RegExp('multipage_end', 'gi').test(window.location.search)) {
         tour_close();
+
     }
   </script>
 
