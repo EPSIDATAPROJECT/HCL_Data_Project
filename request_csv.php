@@ -12,17 +12,35 @@ $filename = "CR_Projet_Data.csv";
 
 
 $index_search = "";
-$search_tab = array();
-$result_tab = array();
+$search_tab = array(); // va contenir les numeros de colonne du csv
+$result_tab = array(); // va contenir les resultats à renvoyer
+$count_result = array(); // va contenir le compte d'itérations
 
+$has_sum = FALSE;
+$has_avg = FALSE;
+
+foreach ($search_query["agg"] as $key => $value) {
+	$index = array_keys($value);
+	if($index[0] == "SUM") {
+		$has_sum = TRUE;
+	}
+	if ($index[0] == "AVG") {
+		$has_avg = TRUE;
+	} 
+}
 
 //print_r($search_tab["valeurs"]);
 foreach ($search_query["valeurs"] as $key => $value) {
 	$index = array_keys($value);
-	$search_tab[$index[0]] = 0; 
-	$result_tab[$index[0]] = 0; 
+	$search_tab[$index[0]] = 0;
+
+	$result_tab[$index[0]]["SUM"] = 0; 
+	$result_tab[$index[0]]["AVG"] = 0; 
+
+	$count_result[$index[0]] = 0;
 }
-$aggregateur = $search_query["agg"];
+
+
 
 
 $row = 1;
@@ -47,7 +65,7 @@ if (($file = fopen($filename, "r")) !== FALSE) {
 			//$result += $data[$index_search];
 			foreach ($search_tab as $key => $value) {
 				if (!empty($data[$value])) {
-					$result_tab[$key] += 1;
+					$count_result[$key] += 1;
 				}
 			}
 
@@ -55,13 +73,21 @@ if (($file = fopen($filename, "r")) !== FALSE) {
 		$row++;
 	}
 
-	if ($aggregateur == "AVG") {
-		foreach ($result_tab as $key => $value) {
-			$result_tab[$key] = ($value*100)/$row;
+
+	if ($has_sum) {
+		foreach ($count_result as $key => $value) {
+			$result_tab[$key]["SUM"] = $value;
 		}
 	}
 
+	if ($has_avg) {
+		foreach ($count_result as $key => $value) {
+			$result_tab[$key]["AVG"] = ($value*100)/$row;
+		}
+	}
+	
 	echo json_encode($result_tab);
+
 // echo "le nb de resultat est : $result";
 
 	fclose($file);

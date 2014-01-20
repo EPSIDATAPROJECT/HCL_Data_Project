@@ -78,8 +78,8 @@
 </ul>
     <label>Fonctions</label>
 
-      <label for="SUM"><input name="radio_fonction" type="radio" id="SUM">Nombre d'occurence</label>
-      <label for="AVG"><input name="radio_fonction" CHECKED type="radio" id="AVG">Moyenne</label>
+      <label for="SUM"><input name="radio_fonction" type="checkbox" id="SUM" class="aggregation">Nombre d'occurence</label>
+      <label for="AVG"><input name="radio_fonction" type="checkbox" id="AVG" class="aggregation">Moyenne</label>
         
 
         <a class="radius button" onclick="process_table();">Générer tableau</a>
@@ -111,12 +111,12 @@ $(window).bind('beforeunload', function() {
 });
 
 var process_chart = function () {
-   var nb_check =  $('input:checked[type=checkbox]').length;
-    var aggregation = $('input:checked[type=radio]')[0].id;
+var nb_check =  $('input.checkbox:checked').length;
+  var nb_agg = $('input.aggregation:checked').length;
 
-var parametre = '{';
+  var parametre = '{';
   parametre += '"valeurs" : [';
-  $('input:checked[type=checkbox]').each(function() {
+  $('input.checkbox:checked').each(function() {
 
       if(nb_check === 1) {
         parametre += '{"'+$(this)[0].id+'":""}';
@@ -125,8 +125,22 @@ var parametre = '{';
       }
       nb_check--;
     });
-  parametre += '],';
-  parametre += '"agg" : "'+ aggregation + '"';
+  parametre += '], "agg" : [';
+
+  $('input.aggregation:checked').each(
+    function() {
+      
+    console.log($(this)[0].id);
+    if(nb_agg === 1) {
+        parametre += '{"'+$(this)[0].id+'":""}';
+      } else {
+        parametre += '{"'+$(this)[0].id+'":""},';
+      }
+      nb_agg--;
+  });
+
+
+  parametre += ']';
 
 
     parametre+='}';  
@@ -137,12 +151,12 @@ var parametre = '{';
 
 var process_table = function (params) {
   if (!params) {
-    var nb_check =  $('input:checked[type=checkbox]').length;
-    var aggregation = $('input:checked[type=radio]')[0].id;
+    var nb_check =  $('input.checkbox:checked').length;
+    var nb_agg = $('input.aggregation:checked').length;
 
-var parametre = '{';
+ var parametre = '{';
   parametre += '"valeurs" : [';
-  $('input:checked[type=checkbox]').each(function() {
+  $('input.checkbox:checked').each(function() {
 
       if(nb_check === 1) {
         parametre += '{"'+$(this)[0].id+'":""}';
@@ -151,8 +165,19 @@ var parametre = '{';
       }
       nb_check--;
     });
-  parametre += '],';
-  parametre += '"agg" : "'+ aggregation + '"';
+  parametre += '], "agg" : [';
+
+  $('input.aggregation:checked').each(function() {
+    if(nb_agg === 1) {
+        parametre += '{"'+$(this)[0].id+'":""}';
+      } else {
+        parametre += '{"'+$(this)[0].id+'":""},';
+      }
+      nb_agg--;
+  });
+
+
+  parametre += ']';
 
 
     parametre+='}';  
@@ -170,15 +195,14 @@ $.ajax({
         },
         success: function(data)
         {
-          
            var data_json = $.parseJSON(data);
-
 
            var donnee = [];
            var categories = [];
             $.each(data_json, function (key, value){
+
               var name = $('label[for='+key+']')[0].textContent;
-              donnee.push({name: name, y: value});
+              donnee.push({name: name, sum: value.SUM, avg: value.AVG});
               categories.push(name);
             });
 
@@ -189,15 +213,37 @@ $.ajax({
             // création du tableau et tout et tout
           $('#table_container').empty();
              $('#table_container').append('<table id="table_result" class="twelve"></table>');
-             var table = $('#table_result');
-             table.append('<thead></thead>');
-             table.append('<tbody><tr></tr></tbody>');
+              var table = $('#table_result');
 
+              var has_sum = false;
+              var has_avg = false;
+
+              var table_header = "<thead><th></th>";
+                $('input.aggregation:checked').each(function() {
+                  table_header += "<th>"+ $('label[for='+$(this)[0].id+']')[0].textContent+"</th>";
+
+                  if ($(this)[0].id === 'SUM')
+                    has_sum = true;
+                  if ($(this)[0].id === 'AVG')
+                    has_avg = true;
+
+                });
+                table_header += "</thead>"
+              table.append(table_header);
+              table.append('<tbody></tbody>');
+              
+              var line = "";
             $.each(donnee, function (key, value){
-              table.find('thead').append('<th>'+value.name+'</th>');
-              table.find('tbody').find('tr').append('<td>'+value.y+'</tr>');
-            });
+              //table.find('thead').append('<th>'+value.name+'</th>');
+              if (has_sum)
+                  line += '<td>' + value.sum+ '</td>';
+              if (has_avg)
+                  line += '<td>' + value.avg+ '</td>';
 
+              table.find('tbody').append('<tr><th>'+value.name+'</th>' + line + '</tr>');
+              line = "";
+
+            });
 
         }
     });
@@ -251,7 +297,6 @@ $('#malformation_content').find('input[type=checkbox]').click(function(){
 // Fonctions pour la recherche dans les options
 
 $('#search_malformation').keyup(function() {
-console.log($(this).val());
   searchOptions('#malformation_content', $(this).val());
 });
 
@@ -288,7 +333,13 @@ if (RegExp('query', 'gi').test(window.location.search)) {
         // trigger pour appeler l'event change sur les checkbox
         $('input#' + key + '[type=checkbox]').trigger('change');
       })
-    })
+    });
+
+    $.each(json['agg'], function(key , obj) {
+      $.each(obj, function(key , value) {
+        $('input#' + key + '[type=checkbox]').prop('checked', 'checked');
+      })
+    });
 
     // Création requete
     process_table($.parseJSON(query));
