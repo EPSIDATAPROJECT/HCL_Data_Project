@@ -111,6 +111,10 @@
   </li>
 </ul>
 
+    <label>Fonctions</label>
+
+      <label for="SUM"><input name="radio_fonction" type="radio" id="SUM">Nombre d'occurence</label>
+      <label for="AVG"><input name="radio_fonction" CHECKED type="radio" id="AVG">Moyenne</label>
 
         <a id="data-step-6"class="radius button" onclick="process_chart();">Générer graphique</a>
         <a class="radius button" onclick="process_table();">Voir sous forme de table</a>
@@ -142,25 +146,34 @@ $(window).bind('beforeunload', function() {
     }
 });
 
+
+// sum, moyenne, 
+// creation de la requete pour envoyer au script php
+// structure de la requete {col: }
 var process_chart = function (params) {
  if (!params) {
-  var nb_check =  $('input:checked[type=checkbox]').length; 
-  var parametre = '{';
+  var nb_check =  $('input:checked[type=checkbox]').length;
+  var aggregation = $('input:checked[type=radio]')[0].id;
 
+  var parametre = '{';
+  parametre += '"valeurs" : [';
   $('input:checked[type=checkbox]').each(function() {
 
       if(nb_check === 1) {
-        parametre += '"'+$(this)[0].id+'":""';
+        parametre += '{"'+$(this)[0].id+'":""}';
       } else {
-        parametre += '"'+$(this)[0].id+'":"",';
+        parametre += '{"'+$(this)[0].id+'":""},';
       }
       nb_check--;
     });
+  parametre += '],';
+  parametre += '"agg" : "'+ aggregation + '"';
 
 
     parametre+='}';  
-
     var params = $.parseJSON(parametre);
+
+    console.log(params);
  }
 
 $.ajax({
@@ -172,16 +185,16 @@ $.ajax({
         },
         success: function(data)
         {
-          
-           var data_json = $.parseJSON(data);
 
-
+          var data_json = $.parseJSON(data);
+          console.log(data_json); 
            var donnee = [];
            var categories = [];
             $.each(data_json, function (key, value){
-              var name = $('label[for='+key+']')[0].textContent;
-              donnee.push({name: name, y: value});
-              categories.push(name);
+                var name = $('label[for='+key+']')[0].textContent;
+                donnee.push({name: name, y: value});
+                categories.push(name);
+
             });
 
             donnee.sort(sortByValue);
@@ -214,23 +227,26 @@ $.ajax({
 
 
 var process_table = function () {
-  var nb_check =  $('input:checked[type=checkbox]').length; 
+   var nb_check =  $('input:checked[type=checkbox]').length;
+    var aggregation = $('input:checked[type=radio]')[0].id;
+
 var parametre = '{';
+  parametre += '"valeurs" : [';
+  $('input:checked[type=checkbox]').each(function() {
 
-$('input:checked[type=checkbox]').each(function() {
+      if(nb_check === 1) {
+        parametre += '{"'+$(this)[0].id+'":""}';
+      } else {
+        parametre += '{"'+$(this)[0].id+'":""},';
+      }
+      nb_check--;
+    });
+  parametre += '],';
+  parametre += '"agg" : "'+ aggregation + '"';
 
-    if(nb_check === 1) {
-      parametre += '"'+$(this)[0].id+'":""';
-    } else {
-      parametre += '"'+$(this)[0].id+'":"",';
-    }
-    nb_check--;
-  });
 
-
- parametre+='}';
-
- var params = $.parseJSON(parametre);
+    parametre+='}';  
+    var params = $.parseJSON(parametre);
  location.href = 'table.html?query=' + JSON.stringify(params);
 
 };
@@ -305,7 +321,7 @@ $('#search_traitement_mere').bind('keyup',function(e) {
 // idVolet = correspond a l'id du volet de l'accordeon
 function searchOptions(idVolet, text) {
  var labels = $(idVolet).find('label');
- var reg = new RegExp(text,"g");
+ var reg = new RegExp(text,"gi");
   
  $.each(labels, function (key, label){
 
@@ -345,12 +361,15 @@ if (RegExp('query', 'gi').test(window.location.search)) {
       json = $.parseJSON(query);
 
     // Checker les checkbox
-    $.each(json, function(key , value) {
-      console.log(key);
-      $('input#' + key + '[type=checkbox]').prop('checked', 'checked');
-      // trigger pour appeler l'event change sur les checkbox
-      $('input#' + key + '[type=checkbox]').trigger('change');
+    $.each(json['valeurs'], function(key , obj) {
+      $.each(obj, function(key , value) {
+        $('input#' + key + '[type=checkbox]').prop('checked', 'checked');
+        // trigger pour appeler l'event change sur les checkbox
+        $('input#' + key + '[type=checkbox]').trigger('change');
+      })
     })
+
+    $('#' + json['agg']).prop('checked', 'checked');
 
 
     // Création requete

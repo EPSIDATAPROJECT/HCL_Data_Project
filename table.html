@@ -73,36 +73,14 @@
     </div>
   </li>
 
-<!--  <li>
-    <div class="title">
-      <h5>Trisomies</h5>
-      <div id="trisomie_tag"></div>
-    </div>
-     <div id="trisomue_content" class="content">
-      <input type="text" id="search_trisomie" placeholder="Rechercher"> -->
-      
-      <!-- Div permettant d'avoir une taille fixe pour l'affichage des options -->
-<!--       <div class="accordion_content_checkbox">
-        <label for="Y74"><input type="checkbox" id="Y74" class="checkbox"> Quelque chose</label>
-        <label for="Y75"><input type="checkbox" id="Y75" class="checkbox"> Un truc</label>
-        <label for="Y76"><input type="checkbox" id="Y76" class="checkbox"> Un autre truc</label>
-
-        <label for="Y77"><input type="checkbox" id="Y77" class="checkbox"> Y77</label>
-        <label for="Y79"><input type="checkbox" id="Y79" class="checkbox"> Y79</label>
-        <label for="Y83"><input type="checkbox" id="Y83" class="checkbox"> Y83</label>
-        <label for="Y84"><input type="checkbox" id="Y84" class="checkbox"> Y84</label>
-        <label for="Y86"><input type="checkbox" id="Y86" class="checkbox"> Y86</label>
-        <label for="Y90"><input type="checkbox" id="Y90" class="checkbox"> Y90</label>
-        <label for="Y97"><input type="checkbox" id="Y97" class="checkbox"> Y97</label>
-        <label for="Y98"><input type="checkbox" id="Y98" class="checkbox"> Y98</label>
-        <label for="Y102"><input type="checkbox" id="Y102" class="checkbox"> Y102</label>
-      </div>
-    </div>
-  </li> -->
 
 
 </ul>
+    <label>Fonctions</label>
 
+      <label for="SUM"><input name="radio_fonction" type="radio" id="SUM">Nombre d'occurence</label>
+      <label for="AVG"><input name="radio_fonction" CHECKED type="radio" id="AVG">Moyenne</label>
+        
 
         <a class="radius button" onclick="process_table();">Générer tableau</a>
         <a class="radius button" onclick="process_chart();">Voir sous forme graphique</a>
@@ -133,46 +111,52 @@ $(window).bind('beforeunload', function() {
 });
 
 var process_chart = function () {
-  var nb_check =  $('input:checked[type=checkbox]').length; 
+   var nb_check =  $('input:checked[type=checkbox]').length;
+    var aggregation = $('input:checked[type=radio]')[0].id;
+
 var parametre = '{';
+  parametre += '"valeurs" : [';
+  $('input:checked[type=checkbox]').each(function() {
 
-$('input:checked[type=checkbox]').each(function() {
+      if(nb_check === 1) {
+        parametre += '{"'+$(this)[0].id+'":""}';
+      } else {
+        parametre += '{"'+$(this)[0].id+'":""},';
+      }
+      nb_check--;
+    });
+  parametre += '],';
+  parametre += '"agg" : "'+ aggregation + '"';
 
-    if(nb_check === 1) {
-      parametre += '"'+$(this)[0].id+'":""';
-    } else {
-      parametre += '"'+$(this)[0].id+'":"",';
-    }
-    nb_check--;
-  });
 
-
- parametre+='}';
-
- var params = $.parseJSON(parametre);
+    parametre+='}';  
+    var params = $.parseJSON(parametre);
  location.href = 'chart.html?query=' + JSON.stringify(params);
 
 };
 
 var process_table = function (params) {
   if (!params) {
-    var nb_check =  $('input:checked[type=checkbox]').length; 
-    var parametre = '{';
+    var nb_check =  $('input:checked[type=checkbox]').length;
+    var aggregation = $('input:checked[type=radio]')[0].id;
 
-    $('input:checked[type=checkbox]').each(function() {
+var parametre = '{';
+  parametre += '"valeurs" : [';
+  $('input:checked[type=checkbox]').each(function() {
 
-        if(nb_check === 1) {
-          parametre += '"'+$(this)[0].id+'":""';
-        } else {
-          parametre += '"'+$(this)[0].id+'":"",';
-        }
-        nb_check--;
-      });
+      if(nb_check === 1) {
+        parametre += '{"'+$(this)[0].id+'":""}';
+      } else {
+        parametre += '{"'+$(this)[0].id+'":""},';
+      }
+      nb_check--;
+    });
+  parametre += '],';
+  parametre += '"agg" : "'+ aggregation + '"';
 
 
-   parametre+='}';
-
-   var params = $.parseJSON(parametre);
+    parametre+='}';  
+    var params = $.parseJSON(parametre);
 }
 
 
@@ -274,7 +258,7 @@ console.log($(this).val());
 
 function searchOptions(idAccordeon, text) {
  var labels = $(idAccordeon).find('label');
- var reg = new RegExp(text,"g");
+ var reg = new RegExp(text,"gi");
 
  $.each(labels, function (key, label){
 
@@ -297,13 +281,13 @@ if (RegExp('query', 'gi').test(window.location.search)) {
       query = decodeURIComponent(results[1].replace(/\+/g, " ")),
       json = $.parseJSON(query);
 
-    // Checker les checkbox
-    $.each(json, function(key , value) {
-      console.log(key);
-      $('input#' + key + '[type=checkbox]').prop('checked', 'checked');
-    // trigger pour appeler l'event change sur les checkbox
-      $('input#' + key + '[type=checkbox]').trigger('change');
-
+       // Checker les checkbox
+    $.each(json['valeurs'], function(key , obj) {
+      $.each(obj, function(key , value) {
+        $('input#' + key + '[type=checkbox]').prop('checked', 'checked');
+        // trigger pour appeler l'event change sur les checkbox
+        $('input#' + key + '[type=checkbox]').trigger('change');
+      })
     })
 
     // Création requete
