@@ -19,18 +19,20 @@ if (($file = fopen($filename, "r")) !== FALSE) {
 			$i = 0;
 			$num = count($data);
 			// 
-			while ($column_name == $data[$i]) {
+			while ($column_name != $data[$i]) {
 				$i++;
 			}
 			$column_id = $i;
 		} else {
 			// on a la colonne a recherche, la colonne du département
-			if ($data[$id_dep] != '' && $data[$id_dep] != 'O') {
-			if (!isset($reponse[$data[$id_dep]]))
-				$reponse[$data[$id_dep]] = 0;
+			if ($data[$column_id] != "") {
+				if ($data[$id_dep] != '' && $data[$id_dep] != 'O') {
+					if (!isset($reponse[$data[$id_dep]]))
+						$reponse[$data[$id_dep]] = 0;
 
 
-			$reponse[$data[$id_dep]] += 1;
+				$reponse[$data[$id_dep]] += 1;
+			}
 		}
 
 
@@ -38,8 +40,8 @@ if (($file = fopen($filename, "r")) !== FALSE) {
 		}
 		$row++;
 	}
-	print_r($reponse);
+	echo json_encode($reponse);
 
-
+	fclose($file);
 }
 }

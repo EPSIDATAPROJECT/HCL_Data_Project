@@ -42,19 +42,7 @@
 
 	  <a class="home_button radius button" href="index.html">Retour vers la page d'accueil</a>
 
-
-
-
-<div id="map_container">
-  <div class="row">
-  <div  class="eight columns" id="map-canvas">
-    va contenir la visualisation en carte
-    </div>
-  </div>
-</div>
-
-      <div class="four columns">
-
+<div id="map_checkbox" class="four columns">
 
 <ul class="accordion">
   <li class="active">
@@ -90,6 +78,17 @@
 
 </div>
 
+
+<div id="map_container">
+  <div class="row">
+  <div  class="eight columns" id="map-canvas">
+    va contenir la visualisation en carte
+    </div>
+  </div>
+</div>
+
+
+
   <!-- Included JS Files (Compressed) -->
   <script src="javascripts/jquery.js"></script>
   <script src="javascripts/foundation.min.js"></script>
@@ -99,7 +98,9 @@
   <script src="javascripts/app.js"></script>
 
 <script type="text/javascript">
- var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+var map;
+// var marker_savoie, marker_ain, marker_drome, marker_isere, marker_rhone, marker_haute_savoie, marker_ardeche, marker_loire;
+
 
 var process_map = function () {
 
@@ -120,8 +121,9 @@ $.ajax({
         },
         success: function(data)
         {
-          
           console.log(data);
+          var data_json = $.parseJSON(data);
+          console.log(data_json);
 
           var dept = [];
           dept[1] = ["Ain","01",46.065375,5.448974];
@@ -133,33 +135,153 @@ $.ajax({
           dept[73] = ["Savoie","73",45.494388,6.403594];
           dept[74] = ["Haute-Savoie","74",46.045179,6.424750];
 
-          $.each(data, function(key, value) {
+          $.each(data_json, function(key, value) {
 
-            var LatLng = new google.maps.LatLng(dept[key][2], dept[key][3]);
+              console.log(key +" "+value);
+               if (key === '69'){
+                var LatLng_rhone = new google.maps.LatLng(dept[key][2], dept[key][3]);
+                  marker_rhone = new google.maps.Marker({
+                  position: LatLng_rhone,
+                  map: map,
+                  title: dept[key][0] + " " + dept[key][1]
+                });
 
+                var infowindow = new google.maps.InfoWindow({
+                    content: "resultat : " + value
+                });
 
-            var marker = new google.maps.Marker({
-                position: LatLng,
-                map: map,
-                title: dept[key][0] + " " + dept[key][1]
-            });
+                  google.maps.event.addListener(marker_rhone, 'click', function() {
+                    infowindow.open(map,marker_rhone);
+                  });
 
-            var infowindow = new google.maps.InfoWindow({
-                content: "info "+ dept[key][0]
-            });
+               }
+               if (key === '38'){
+                var LatLng_isere = new google.maps.LatLng(dept[key][2], dept[key][3]);
+                  marker_isere = new google.maps.Marker({
+                  position: LatLng_isere,
+                  map: map,
+                  title: dept[key][0] + " " + dept[key][1]
+                });
 
-            google.maps.event.addListener(marker, 'click', function() {
-              infowindow.open(map,marker);
-            });
+                var infowindow = new google.maps.InfoWindow({
+                    content: "resultat : " + value
+                });
 
+                  google.maps.event.addListener(marker_isere, 'click', function() {
+                    infowindow.open(map,marker_isere);
+                  });
 
+               }
+               if (key === '1'){
+                var LatLng_ain = new google.maps.LatLng(dept[key][2], dept[key][3]);
+                  marker_ain = new google.maps.Marker({
+                  position: LatLng_ain,
+                  map: map,
+                  title: dept[key][0] + " " + dept[key][1]
+                });
 
-          });
+                var infowindow = new google.maps.InfoWindow({
+                    content: "resultat : " + value
+                });
+
+                  google.maps.event.addListener(marker_ain, 'click', function() {
+                    infowindow.open(map,marker_ain);
+                  });
+
+               }
+               if (key === '7'){
+                var LatLng_ardeche = new google.maps.LatLng(dept[key][2], dept[key][3]);
+                  marker_ardeche = new google.maps.Marker({
+                  position: LatLng_ardeche,
+                  map: map,
+                  title: dept[key][0] + " " + dept[key][1]
+                });
+
+                var infowindow = new google.maps.InfoWindow({
+                    content: "resultat : " + value
+                });
+
+                  google.maps.event.addListener(marker_ardeche, 'click', function() {
+                    infowindow.open(map,marker_ardeche);
+                  });
+
+               }
+               if (key === '26'){
+                var LatLng_drome = new google.maps.LatLng(dept[key][2], dept[key][3]);
+                  marker_drome = new google.maps.Marker({
+                  position: LatLng_drome,
+                  map: map,
+                  title: dept[key][0] + " " + dept[key][1]
+                });
+
+                var infowindow = new google.maps.InfoWindow({
+                    content: "resultat : " + value
+                });
+
+                  google.maps.event.addListener(marker_drome, 'click', function() {
+                    infowindow.open(map,marker_drome);
+                  });
+
+               }
+               if (key === '42'){
+                var LatLng_loire = new google.maps.LatLng(dept[key][2], dept[key][3]);
+                  marker_loire = new google.maps.Marker({
+                  position: LatLng_loire,
+                  map: map,
+                  title: dept[key][0] + " " + dept[key][1]
+                });
+
+                var infowindow = new google.maps.InfoWindow({
+                    content: "resultat : " + value
+                });
+
+                  google.maps.event.addListener(marker_loire, 'click', function() {
+                    infowindow.open(map,marker_loire);
+                  });
+
+               }
+               if (key === '73'){
+                var LatLng_savoie = new google.maps.LatLng(dept[key][2], dept[key][3]);
+                  marker_savoie = new google.maps.Marker({
+                  position: LatLng_savoie,
+                  map: map,
+                  title: dept[key][0] + " " + dept[key][1]
+                });
+
+                var infowindow = new google.maps.InfoWindow({
+                    content: "resultat : " + value
+                });
+
+                  google.maps.event.addListener(marker_savoie, 'click', function() {
+                    infowindow.open(map,marker_savoie);
+                  });
+
+               }
+               if (key === '74'){
+                var LatLng_haute_savoie = new google.maps.LatLng(dept[key][2], dept[key][3]);
+                  marker_haute_savoie = new google.maps.Marker({
+                  position: LatLng_haute_savoie,
+                  map: map,
+                  title: dept[key][0] + " " + dept[key][1]
+                });
+
+                var infowindow = new google.maps.InfoWindow({
+                    content: "resultat : " + value
+                });
+
+                  google.maps.event.addListener(marker_haute_savoie, 'click', function() {
+                    infowindow.open(map,marker_haute_savoie);
+                  });
+
+               }
+               
+             });
+          }
 
           // y mettre dans les text de markeyr
 
-        }
-    });
+        });
+    
 
 }
       
@@ -172,7 +294,7 @@ function initialize() {
     center: lyon
   }
 
-  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
 
 /* Données pour les marqueurs la map */
@@ -189,137 +311,137 @@ var dept = [];
 var i=0;
 var infowindow = [];
 
-// var LatLng_ain = new google.maps.LatLng(dept[0][2], dept[0][3]);
-// var LatLng_ardeche = new google.maps.LatLng(dept[1][2], dept[1][3]);
-// var LatLng_drome = new google.maps.LatLng(dept[2][2], dept[2][3]);
-// var LatLng_isere = new google.maps.LatLng(dept[3][2], dept[3][3]);
-// var LatLng_loire = new google.maps.LatLng(dept[4][2], dept[4][3]);
-// var LatLng_rhone = new google.maps.LatLng(dept[5][2], dept[5][3]);
-// var LatLng_savoie = new google.maps.LatLng(dept[6][2], dept[6][3]);
-// var LatLng_haute_savoie = new google.maps.LatLng(dept[7][2], dept[7][3]);
+var LatLng_ain = new google.maps.LatLng(dept[0][2], dept[0][3]);
+var LatLng_ardeche = new google.maps.LatLng(dept[1][2], dept[1][3]);
+var LatLng_drome = new google.maps.LatLng(dept[2][2], dept[2][3]);
+var LatLng_isere = new google.maps.LatLng(dept[3][2], dept[3][3]);
+var LatLng_loire = new google.maps.LatLng(dept[4][2], dept[4][3]);
+var LatLng_rhone = new google.maps.LatLng(dept[5][2], dept[5][3]);
+var LatLng_savoie = new google.maps.LatLng(dept[6][2], dept[6][3]);
+var LatLng_haute_savoie = new google.maps.LatLng(dept[7][2], dept[7][3]);
 
-//   // var myLatIng = new google.maps.LatLng(dept[i][2], dept[i][3]);
-//   // var marker = new google.maps.Marker({
-//   //   position: LatLng_ain,
-//   //   map: map,
-//   //   title: dept[i][0] + " " + dept[i][1]});
+  // var myLatIng = new google.maps.LatLng(dept[i][2], dept[i][3]);
+  // var marker = new google.maps.Marker({
+  //   position: LatLng_ain,
+  //   map: map,
+  //   title: dept[i][0] + " " + dept[i][1]});
 
-// var marker_ain = new google.maps.Marker({
-//     position: LatLng_ain,
-//     map: map,
-//     title: dept[0][0] + " " + dept[0][1]});
+ //   marker_ain = new google.maps.Marker({
+ //    position: LatLng_ain,
+ //    map: map,
+ //    title: dept[0][0] + " " + dept[0][1]});
 
-// var marker_ardeche = new google.maps.Marker({
-//     position: LatLng_ardeche,
-//     map: map,
-//     title: dept[1][0] + " " + dept[1][1]});
+ // marker_ardeche = new google.maps.Marker({
+ //    position: LatLng_ardeche,
+ //    map: map,
+ //    title: dept[1][0] + " " + dept[1][1]});
 
-// var marker_drome = new google.maps.Marker({
-//     position: LatLng_drome,
-//     map: map,
-//     title: dept[2][0] + " " + dept[2][1]});
+ // marker_drome = new google.maps.Marker({
+ //    position: LatLng_drome,
+ //    map: map,
+ //    title: dept[2][0] + " " + dept[2][1]});
 
-// var marker_isere = new google.maps.Marker({
-//     position: LatLng_isere,
-//     map: map,
-//     title: dept[3][0] + " " + dept[3][1]});
+ // marker_isere = new google.maps.Marker({
+ //    position: LatLng_isere,
+ //    map: map,
+ //    title: dept[3][0] + " " + dept[3][1]});
 
-// var marker_loire = new google.maps.Marker({
-//     position: LatLng_loire,
-//     map: map,
-//     title: dept[4][0] + " " + dept[4][1]});
+ // marker_loire = new google.maps.Marker({
+ //    position: LatLng_loire,
+ //    map: map,
+ //    title: dept[4][0] + " " + dept[4][1]});
 
-// var marker_rhone = new google.maps.Marker({
-//     position: LatLng_rhone,
-//     map: map,
-//     title: dept[5][0] + " " + dept[5][1]});
+ // marker_rhone = new google.maps.Marker({
+ //    position: LatLng_rhone,
+ //    map: map,
+ //    title: dept[5][0] + " " + dept[5][1]});
 
-// var marker_savoie = new google.maps.Marker({
-//     position: LatLng_savoie,
-//     map: map,
-//     title: dept[6][0] + " " + dept[6][1]});
+ // marker_savoie = new google.maps.Marker({
+ //    position: LatLng_savoie,
+ //    map: map,
+ //    title: dept[6][0] + " " + dept[6][1]});
 
-// var marker_haute_savoie = new google.maps.Marker({
-//     position: LatLng_haute_savoie,
-//     map: map,
-//     title: dept[7][0] + " " + dept[7][1]});
-
-
-//   var infowindow_ain = new google.maps.InfoWindow({
-//       content: "info ain"
-//   });
-
-//     var infowindow_ardeche = new google.maps.InfoWindow({
-//       content: "info ardeche"
-//   });
-
-//       var infowindow_drome = new google.maps.InfoWindow({
-//       content: "info drome"
-//   });
+ // marker_haute_savoie = new google.maps.Marker({
+ //    position: LatLng_haute_savoie,
+ //    map: map,
+ //    title: dept[7][0] + " " + dept[7][1]});
 
 
-//       var infowindow_isere = new google.maps.InfoWindow({
-//       content: "info isere"
-//   });
+ //  var infowindow_ain = new google.maps.InfoWindow({
+ //      content: "info ain"
+ //  });
+
+ //    var infowindow_ardeche = new google.maps.InfoWindow({
+ //      content: "info ardeche"
+ //  });
+
+ //      var infowindow_drome = new google.maps.InfoWindow({
+ //      content: "info drome"
+ //  });
 
 
-//       var infowindow_loire = new google.maps.InfoWindow({
-//       content: "info loire"
-//   });
+ //      var infowindow_isere = new google.maps.InfoWindow({
+ //      content: "info isere"
+ //  });
 
 
-//       var infowindow_rhone = new google.maps.InfoWindow({
-//       content: "info rhone"
-//   });
+ //      var infowindow_loire = new google.maps.InfoWindow({
+ //      content: "info loire"
+ //  });
 
 
-//       var infowindow_savoie = new google.maps.InfoWindow({
-//       content: "info savoie"
-//   });
+ //      var infowindow_rhone = new google.maps.InfoWindow({
+ //      content: "info rhone"
+ //  });
 
 
-//       var infowindow_haute_savoie = new google.maps.InfoWindow({
-//       content: "info haute_savoie"
-//   });
-
-//   google.maps.event.addListener(marker_ain, 'click', function() {
-//     infowindow_ain.open(map,marker_ain);
-//   });
+ //      var infowindow_savoie = new google.maps.InfoWindow({
+ //      content: "info savoie"
+ //  });
 
 
-//   google.maps.event.addListener(marker_isere, 'click', function() {
-//     infowindow_isere.open(map,marker_isere);
-//   });
+ //      var infowindow_haute_savoie = new google.maps.InfoWindow({
+ //      content: "info haute_savoie"
+ //  });
+
+ //  google.maps.event.addListener(marker_ain, 'click', function() {
+ //    infowindow_ain.open(map,marker_ain);
+ //  });
 
 
-//   google.maps.event.addListener(marker_drome, 'click', function() {
-//     infowindow_drome.open(map,marker_drome);
-//   });
+ //  google.maps.event.addListener(marker_isere, 'click', function() {
+ //    infowindow_isere.open(map,marker_isere);
+ //  });
 
 
-//   google.maps.event.addListener(marker_haute_savoie, 'click', function() {
-//     infowindow_haute_savoie.open(map,marker_haute_savoie);
-//   });
+ //  google.maps.event.addListener(marker_drome, 'click', function() {
+ //    infowindow_drome.open(map,marker_drome);
+ //  });
 
 
-//   google.maps.event.addListener(marker_savoie, 'click', function() {
-//     infowindow_savoie.open(map,marker_savoie);
-//   });
+ //  google.maps.event.addListener(marker_haute_savoie, 'click', function() {
+ //    infowindow_haute_savoie.open(map,marker_haute_savoie);
+ //  });
 
 
-//   google.maps.event.addListener(marker_rhone, 'click', function() {
-//     infowindow_rhone.open(map,marker_rhone);
-//   });
+ //  google.maps.event.addListener(marker_savoie, 'click', function() {
+ //    infowindow_savoie.open(map,marker_savoie);
+ //  });
 
 
-//   google.maps.event.addListener(marker_ardeche, 'click', function() {
-//     infowindow_ardeche.open(map,marker);
-//   });
+ //  google.maps.event.addListener(marker_rhone, 'click', function() {
+ //    infowindow_rhone.open(map,marker_rhone);
+ //  });
 
 
-//   google.maps.event.addListener(marker_loire, 'click', function() {
-//     infowindow_loire.open(map,marker_loire);
-//   });
+ //  google.maps.event.addListener(marker_ardeche, 'click', function() {
+ //    infowindow_ardeche.open(map,marker_ardeche);
+ //  });
+
+
+ //  google.maps.event.addListener(marker_loire, 'click', function() {
+ //    infowindow_loire.open(map,marker_loire);
+ //  });
 
 
   // google.maps.event.addListener(marker, 'click', function() {
