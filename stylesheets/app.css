@@ -84,7 +84,7 @@ a.button.green{
 
 
 /* -----------------------------------------
-   Page Name 2
+   Page chart
 ----------------------------------------- */
 #chart_content {
 	margin-top: 10px;
@@ -93,5 +93,15 @@ a.button.green{
 #chart_container {
 	background-color: white;
 	padding: 5px
+}
+
+/* -----------------------------------------
+   Page map
+----------------------------------------- */
+
+#map-canvas { 
+	height: 500px; 
+	width: 500px; 
+		
 }
 

@@ -59,9 +59,9 @@
 
       
       <div id="data-step-5" class="accordion_content_checkbox">
-        <label for="Y74"><input type="checkbox" id="Y74" class="checkbox"> Quelque chose</label>
-        <label for="Y75"><input type="checkbox" id="Y75" class="checkbox"> Un truc</label>
-        <label for="Y76"><input type="checkbox" id="Y76" class="checkbox"> Un autre truc</label>
+        <label for="Y74"><input type="checkbox" id="Y74" class="checkbox">Y74</label>
+        <label for="Y75"><input type="checkbox" id="Y75" class="checkbox">Y75</label>
+        <label for="Y76"><input type="checkbox" id="Y76" class="checkbox">Y76</label>
 
         <label for="Y77"><input type="checkbox" id="Y77" class="checkbox"> Y77</label>
         <label for="Y79"><input type="checkbox" id="Y79" class="checkbox"> Y79</label>
@@ -110,14 +110,33 @@
     </div>
   </li>
 </ul>
+    <label>Fonctions</label>
+    <label for="C3_2"><input type="checkbox" id ="C3_2" class="resultBy">Résulat en fonction du temps (Beta)</label>
 
     <label>Fonctions</label>
 
       <label for="SUM"><input name="radio_fonction" type="radio" class="aggregation" id="SUM">Nombre d'occurence</label>
       <label for="AVG"><input name="radio_fonction" CHECKED type="radio" class="aggregation" id="AVG">Moyenne</label>
 
+
+
+
+<label>Type de diagramme</label>
+        <label for="pie"><input type="radio" name="radio_chartstyle" class="chart_style" id="pie">Circulaire</label>
+        <label for="line"><input type="radio" name="radio_chartstyle" class="chart_style" id="line">Ligne</label>
+        <label for="bar"><input type="radio" name="radio_chartstyle" class="chart_style" id="bar">Barre</label>
+        <label for="area"><input type="radio" name="radio_chartstyle" class="chart_style" id="area">Aire</label>
+
+
+
+
         <a id="data-step-6"class="radius button" onclick="process_chart();">Générer graphique</a>
         <a class="radius button" onclick="process_table();">Voir sous forme de table</a>
+
+
+
+
+
       </div>
       
     </div>
@@ -137,6 +156,15 @@
  // Decoche les options lors d'un raffraichissement de la page    
 $('input:checked[type=checkbox]').attr('checked', false);
 $('.accordion_content_search').val('');
+
+
+// Change le type de graphique
+$('input[name=radio_chartstyle]').bind('change', function() {
+    if (typeof $('#chart_container').highcharts() !== "undefined") {
+      $('#chart_container').empty();
+      $('#chart_container').highcharts().series[0].update({ type: $('input:checked[name=radio_chartstyle]').attr('id')});
+    }
+});
 
 
 $(window).bind('beforeunload', function() {
@@ -181,12 +209,16 @@ var process_chart = function (params) {
   parametre += ']';
 
 
+  if ($('input.resultBy:checked').attr('id'))
+  parametre += ',"resultBy" : "' + $('input.resultBy:checked').attr('id')+'"';
+
+
+
     parametre+='}';  
     var params = $.parseJSON(parametre);
-
     console.log(params);
  }
-
+var categories = [];
 $.ajax({
         url: 'request_csv.php',
         type:'POST',
@@ -197,26 +229,32 @@ $.ajax({
         success: function(data)
         {
           var data_json = $.parseJSON(data);
+console.log(data_json);
            var donnee = [];
            var categories = [];
            var valeur = 0;
-            $.each(data_json, function (key, value){
-              if (value.SUM != 0)
-                valeur = value.SUM
-              else if (value.AVG != 0)
-                valeur = value.AVG
 
-                var name = $('label[for='+key+']')[0].textContent;
-                donnee.push({name: name, y: valeur});
-                categories.push(name);
 
-            });
+           ////
+           if (!$('input.resultBy:checked').attr('id')) {
+              $.each(data_json, function (key, value){
+                
+                if (value.SUM > 0)
+                  valeur = value.SUM
+                else if (value.AVG > 0)
+                  valeur = value.AVG
 
-            donnee.sort(sortByValue);
+   
+                  var name = $('label[for='+key+']')[0].textContent;
+                  donnee.push({name: name, y: valeur});
+                  categories.push(name);
+
+              });
+              donnee.sort(sortByValue);
 
                $('#chart_container').highcharts({
                 chart: {
-                    type: 'bar'
+                    type: $('input:checked[name=radio_chartstyle]').attr('id')
                 },
                 title: {
                     text: 'Malformations'
@@ -226,15 +264,104 @@ $.ajax({
                 },
                 yAxis: {
                     title: {
-                        text: 'Fruit eaten'
+                        text: ''
                     }
                 },
                 series: [{
-                  type: 'pie',
                   name: 'Browser share',
                   data: donnee
                 }]
             });
+
+            } else {
+
+
+            var colors = Highcharts.getOptions().colors;
+            // on met les années dans en catégorie
+            
+            var data = [];
+            var sum = 0;
+            $.each(data_json, function (annee, obj_key){
+              sum = 0;
+              
+              $.each(obj_key, function (key, value) {
+                if (value.AVG > 0) {
+                  sum += value.AVG;
+                  data.push({name: annee, categories: key, data:value.AVG});
+                } else if (value.SUM > 0) {
+                  sum += value.SUM;
+                  data.push({name: annee, categories: key, data:value.SUM});
+                }
+              });
+
+
+              categories.push({name: annee, y: sum});
+            });
+    
+        var niveau0 = [];
+        var niveau1 = [];
+
+        var sum = 0;
+
+
+   for (var i = 0; i < categories.length; i++) {
+            // add browser data
+            niveau0.push({
+                name: categories[i].name,
+                y: categories[i].y,
+                color: colors[i]
+            });
+    
+            // add version data
+            for (var j = 0; j < data.length; j++) {
+                //var brightness = 0.2 - (j / data[i].data.length) / 5 ;
+                if (data[j].name === categories[i].name) {
+                niveau1.push({
+                    name: data[j].categories,
+                    y: data[j].data,
+                    color: colors[i]
+                    //color: Highcharts.Color(data[i].color).brighten(brightness).get()
+                });
+              }
+            }
+        }
+
+
+                $('#chart_container').highcharts({
+                chart: {
+                    type: $('input:checked[name=radio_chartstyle]').attr('id')
+                },
+                title: {
+                    text: 'Malformations'
+                },
+                xAxis: {
+                    categories: categories
+                },
+                yAxis: {
+                    title: {
+                        text: ''
+                    }
+                },
+                series: [{
+                  name: 'Annee',
+                  data: niveau0,
+                   size: '60%',
+                }, {
+                  name: 'Malformations',
+                  data: niveau1,
+                   size: '80%',
+                  innerSize: '60%',
+                  dataLabels: {
+                    formatter: function() {
+                        // display only if larger than 1
+                        return this.y > 1 ? '<b>'+ this.point.name +':</b> '+ this.y +'%'  : null;
+                    }
+                }
+                }]
+            });
+            }
+
+
         }
     });
 

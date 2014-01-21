@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map-canvas { height: 100% }
+    </style>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDV1YKr7QPD9mnuHbEJkOwrC-ZDnMJ5oGI&sensor=false">
+    </script>
+    <script type="text/javascript">
+      
+
+function initialize() {
+  /* -- Point de départ pour centrer la map -- */
+  var lyon = new google.maps.LatLng(45.316250,5.396667);
+  var mapOptions = {
+    zoom: 7,
+    center: lyon
+  }
+
+  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+/* -- Affichage des marqueurs centraux pour chaque département -- /
+var myLatlng = new google.maps.LatLng(46.065375, 5.448974);
+var marker = new google.maps.Marker({
+  position: myLatlng,
+  map: map,
+  title:"Ain"
+});*/
+
+/* Données pour les marqueurs la map */
+var dept = [];
+  dept[0] = ["Ain","01",46.065375,5.448974];
+  dept[1] = ["Ardeche","07",44.815342,4.373790];
+  dept[2] = ["Drome","26",44.729651,5.238637];
+  dept[3] = ["Isere","38",45.289696,5.550697];
+  dept[4] = ["Loire","42",45.753789,4.224511];
+  dept[5] = ["Rhone","69",45.880356,4.702795];
+  dept[6] = ["Savoie","73",45.494388,6.403594];
+  dept[7] = ["Haute-Savoie","74",46.045179,6.424750];
+
+var i=0;
+
+while(dept[i]){
+
+  var myLatIng = new google.maps.LatLng(dept[i][2], dept[i][3]);
+  var marker = new google.maps.Marker({
+    position: myLatIng,
+    map: map,
+    title: dept[i][0] + " " + dept[i][1]});
+  i++;
+}
+/* --------------------------
+Coordonnées centre départements
+"01" => "46.065375, 5.448974",
+"07" => "44.815342, 4.373790",
+"26" => "44.729651, 5.238637",
+"38" => "45.289696, 5.550697",
+"42" => "45.753789, 4.224511",
+"69" => "45.880356, 4.702795",
+"73" => "45.494388, 6.403594",
+"74" => "46.045179, 6.424750",
+--------------------------------
+*/
+
+  /* -- KML pour affichage des départements -- */
+/* ATTENTION : KML accessible en public ! Voir si ça peut être un problème, 
+sachant qu'ils ne sont utilisés que pour le dessin des départements */
+ // TO DO : un joli truc avec un tableau parce que là c'est moche (éventuellement l'intégrer au précédent)
+ var layers = [];
+  layers[0] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/01.kml', {preserveViewport: true});
+  layers[1] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/07.kml', {preserveViewport: true});
+  layers[2] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/26.kml', {preserveViewport: true});
+  layers[3] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/38.kml', {preserveViewport: true});
+  layers[4] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/42.kml', {preserveViewport: true});
+  layers[5] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/69.kml', {preserveViewport: true});
+  layers[6] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/73.kml', {preserveViewport: true});
+  layers[7] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/74.kml', {preserveViewport: true});
+
+  layers[0].setMap(map);
+  layers[1].setMap(map);
+  layers[2].setMap(map);
+  layers[3].setMap(map);
+  layers[4].setMap(map);
+  layers[5].setMap(map);
+  layers[6].setMap(map);
+  layers[7].setMap(map);
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"/>
+  </body>
+</html>

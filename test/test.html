@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map-canvas { height: 50% }
+    </style>
+
+  <script src="../javascripts/jquery.js"></script>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDV1YKr7QPD9mnuHbEJkOwrC-ZDnMJ5oGI&sensor=false">
+    </script>
+    <script type="text/javascript">
+      
+
+function initialize() {
+  var lyon = new google.maps.LatLng(45.316250,5.396667);
+  var mapOptions = {
+    zoom: 8,
+    center: lyon
+  }
+
+  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+  // xmlhttp = new XMLHttpRequest();
+  // xmlhttp.open("GET","KML/Dept/69.kml",false);
+  // xmlhttp.send();
+  // xmlDoc = xmlhttp.responseXML;
+
+
+
+  $.ajax( {
+            type: "GET",
+            url: "KML/Dept/69.kml",
+            dataType: "xml",
+            success: function(xml) { 
+              //console.log($(xml).find("coordinates"));
+              var i =0;
+              var rhoneRecords = [];
+  var mapsEngineLayer = new google.maps.visualization.MapsEngineLayer({
+    layerId: '06673056454046135537-08896501997766553811',
+    map: map
+  });
+
+
+
+              $(xml).find("coordinates").each(function(){     
+                $.each($(this).text().split(' '), function(key, value) {
+                  $.each(value.split(' '), function(key, coord) {
+                    rhoneRecords[i++] = new google.maps.LatLng(coord[0], coord[1]);
+                  });
+                });
+              });
+
+                var pointArray = new google.maps.MVCArray(rhoneRecords);
+
+        heatmap = new google.maps.visualization.HeatmapLayer({
+          data: pointArray
+        });
+
+        heatmap.setMap(map);
+
+              //   rhone_area = new google.maps.Polygon({
+              //   paths: rhoneRecords,
+              //   strokeColor: '#FF0000',
+              //   strokeOpacity: 0.8,
+              //   strokeWeight: 3,
+              //   fillColor: '#FF0000',
+              //   fillOpacity: 0.35
+              // });
+
+              // rhone_area.setMap(map);
+
+            }
+        }
+      );            
+        
+
+
+
+
+
+
+
+  /* -- KML pour affichage des départements -- */
+
+  /*var ctaLayer = new google.maps.KmlLayer({
+    url: '/KML/Dept/69.kml'
+  });
+  ctaLayer.setMap(map);*/
+
+  var layers = [];
+
+   layers[0] = new google.maps.KmlLayer('test/KML/Dept/69.kml', {preserveViewport: true});
+  // layers[1] = new google.maps.KmlLayer('KML/Dept/01.kml', {preserveViewport: true});
+  // layers[2] = new google.maps.KmlLayer('KML/Dept/38.kml', {preserveViewport: true});
+  // layers[3] = new google.maps.KmlLayer('KML/Dept/73.kml', {preserveViewport: true});
+  // layers[4] = new google.maps.KmlLayer('KML/Dept/74.kml', {preserveViewport: true});
+    var ctaLayer = new google.maps.KmlLayer({
+    url: 'KML/Dept/69.kml'
+  });
+  ctaLayer.setMap(map);
+
+  layers[0].setMap(map);
+  // layers[1].setMap(map);
+  // layers[2].setMap(map);
+  // layers[3].setMap(map);
+  // layers[4].setMap(map);
+
+
+  /* Affichage des KML */
+  /*var i = 0;
+  while(layers[i])
+  {
+    layers[i].setMap(map);
+    i++;
+  } */
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"/>
+  </body>
+</html>
