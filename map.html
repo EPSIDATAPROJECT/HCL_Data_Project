@@ -6,7 +6,9 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
   <meta charset="utf-8" />
+    <style type="text/css">
 
+    </style>
   <!-- Set the viewport width to device width for mobile -->
   <meta name="viewport" content="width=device-width" />
 
@@ -18,6 +20,9 @@
   <link rel="stylesheet" href="stylesheets/multi-select.css">
 
   <script src="javascripts/modernizr.foundation.js"></script>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDV1YKr7QPD9mnuHbEJkOwrC-ZDnMJ5oGI&sensor=false">
+  </script>
 </head>
 <body>
 
@@ -40,10 +45,49 @@
 
 
 
-<div id="map_content">
+<div id="map_container">
   <div class="row">
+  <div  class="eight columns" id="map-canvas">
     va contenir la visualisation en carte
+    </div>
   </div>
+</div>
+
+      <div class="four columns">
+
+
+<ul class="accordion">
+  <li class="active">
+    <div class="title">
+      <h5>Malformations</h5>
+      <div id="malformation_tag"></div>
+    </div>
+    <div id="malformation_content" class="content">
+      <input type="text" id="search_malformation" placeholder="Rechercher">
+
+      <!-- Div permettant d'avoir une taille fixe pour l'affichage des options -->
+      <div class="accordion_content_checkbox">
+        <label for="Y74"><input type="radio" name="radio_malformations" id="Y74" class="radio"> Y74</label>
+        <label for="Y75"><input type="radio" name="radio_malformations" id="Y75" class="radio"> Y75</label>
+        <label for="Y76"><input type="radio" name="radio_malformations" id="Y76" class="radio"> Y76</label>
+
+        <label for="Y77"><input type="radio" name="radio_malformations" id="Y77" class="radio"> Y77</label>
+        <label for="Y79"><input type="radio" name="radio_malformations" id="Y79" class="radio"> Y79</label>
+        <label for="Y83"><input type="radio" name="radio_malformations" id="Y83" class="radio"> Y83</label>
+        <label for="Y84"><input type="radio" name="radio_malformations" id="Y84" class="radio"> Y84</label>
+        <label for="Y86"><input type="radio" name="radio_malformations" id="Y86" class="radio"> Y86</label>
+        <label for="Y90"><input type="radio" name="radio_malformations" id="Y90" class="radio"> Y90</label>
+        <label for="Y97"><input type="radio" name="radio_malformations" id="Y97" class="radio"> Y97</label>
+        <label for="Y98"><input type="radio" name="radio_malformations" id="Y98" class="radio"> Y98</label>
+        <label for="Y102"><input type="radio" name="radio_malformations" id="Y102" class="radio"> Y102</label>
+      </div>
+    </div>
+  </li>
+
+</ul>
+
+       <a id="data-step-6"class="radius button" onclick="process_map();">Générer</a>
+
 </div>
 
   <!-- Included JS Files (Compressed) -->
@@ -54,6 +98,290 @@
   <!-- Initialize JS Plugins -->
   <script src="javascripts/app.js"></script>
 
+<script type="text/javascript">
+ var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+var process_map = function () {
+
+    var nb_check =  $('input.checkbox:checked').length;
+    var nb_agg = $('input.aggregation:checked').length;
+  
+    var parametre = $('input:checked[type=radio]').attr('id');
+
+
+
+
+$.ajax({
+        url: 'request_map.php',
+        type:'POST',
+        data: {
+             fonction:'request',
+             params: parametre,
+        },
+        success: function(data)
+        {
+          
+          console.log(data);
+
+          var dept = [];
+          dept[1] = ["Ain","01",46.065375,5.448974];
+          dept[7] = ["Ardeche","07",44.815342,4.373790];
+          dept[26] = ["Drome","26",44.729651,5.238637];
+          dept[38] = ["Isere","38",45.289696,5.550697];
+          dept[42] = ["Loire","42",45.753789,4.224511];
+          dept[69] = ["Rhone","69",45.880356,4.702795];
+          dept[73] = ["Savoie","73",45.494388,6.403594];
+          dept[74] = ["Haute-Savoie","74",46.045179,6.424750];
+
+          $.each(data, function(key, value) {
+
+            var LatLng = new google.maps.LatLng(dept[key][2], dept[key][3]);
+
+
+            var marker = new google.maps.Marker({
+                position: LatLng,
+                map: map,
+                title: dept[key][0] + " " + dept[key][1]
+            });
+
+            var infowindow = new google.maps.InfoWindow({
+                content: "info "+ dept[key][0]
+            });
+
+            google.maps.event.addListener(marker, 'click', function() {
+              infowindow.open(map,marker);
+            });
+
+
+
+          });
+
+          // y mettre dans les text de markeyr
+
+        }
+    });
+
+}
+      
+
+function initialize() {
+  /* -- Point de départ pour centrer la map -- */
+  var lyon = new google.maps.LatLng(45.316250,5.396667);
+  var mapOptions = {
+    zoom: 7,
+    center: lyon
+  }
+
+  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+
+/* Données pour les marqueurs la map */
+var dept = [];
+  dept[0] = ["Ain","01",46.065375,5.448974];
+  dept[1] = ["Ardeche","07",44.815342,4.373790];
+  dept[2] = ["Drome","26",44.729651,5.238637];
+  dept[3] = ["Isere","38",45.289696,5.550697];
+  dept[4] = ["Loire","42",45.753789,4.224511];
+  dept[5] = ["Rhone","69",45.880356,4.702795];
+  dept[6] = ["Savoie","73",45.494388,6.403594];
+  dept[7] = ["Haute-Savoie","74",46.045179,6.424750];
+
+var i=0;
+var infowindow = [];
+
+// var LatLng_ain = new google.maps.LatLng(dept[0][2], dept[0][3]);
+// var LatLng_ardeche = new google.maps.LatLng(dept[1][2], dept[1][3]);
+// var LatLng_drome = new google.maps.LatLng(dept[2][2], dept[2][3]);
+// var LatLng_isere = new google.maps.LatLng(dept[3][2], dept[3][3]);
+// var LatLng_loire = new google.maps.LatLng(dept[4][2], dept[4][3]);
+// var LatLng_rhone = new google.maps.LatLng(dept[5][2], dept[5][3]);
+// var LatLng_savoie = new google.maps.LatLng(dept[6][2], dept[6][3]);
+// var LatLng_haute_savoie = new google.maps.LatLng(dept[7][2], dept[7][3]);
+
+//   // var myLatIng = new google.maps.LatLng(dept[i][2], dept[i][3]);
+//   // var marker = new google.maps.Marker({
+//   //   position: LatLng_ain,
+//   //   map: map,
+//   //   title: dept[i][0] + " " + dept[i][1]});
+
+// var marker_ain = new google.maps.Marker({
+//     position: LatLng_ain,
+//     map: map,
+//     title: dept[0][0] + " " + dept[0][1]});
+
+// var marker_ardeche = new google.maps.Marker({
+//     position: LatLng_ardeche,
+//     map: map,
+//     title: dept[1][0] + " " + dept[1][1]});
+
+// var marker_drome = new google.maps.Marker({
+//     position: LatLng_drome,
+//     map: map,
+//     title: dept[2][0] + " " + dept[2][1]});
+
+// var marker_isere = new google.maps.Marker({
+//     position: LatLng_isere,
+//     map: map,
+//     title: dept[3][0] + " " + dept[3][1]});
+
+// var marker_loire = new google.maps.Marker({
+//     position: LatLng_loire,
+//     map: map,
+//     title: dept[4][0] + " " + dept[4][1]});
+
+// var marker_rhone = new google.maps.Marker({
+//     position: LatLng_rhone,
+//     map: map,
+//     title: dept[5][0] + " " + dept[5][1]});
+
+// var marker_savoie = new google.maps.Marker({
+//     position: LatLng_savoie,
+//     map: map,
+//     title: dept[6][0] + " " + dept[6][1]});
+
+// var marker_haute_savoie = new google.maps.Marker({
+//     position: LatLng_haute_savoie,
+//     map: map,
+//     title: dept[7][0] + " " + dept[7][1]});
+
+
+//   var infowindow_ain = new google.maps.InfoWindow({
+//       content: "info ain"
+//   });
+
+//     var infowindow_ardeche = new google.maps.InfoWindow({
+//       content: "info ardeche"
+//   });
+
+//       var infowindow_drome = new google.maps.InfoWindow({
+//       content: "info drome"
+//   });
+
+
+//       var infowindow_isere = new google.maps.InfoWindow({
+//       content: "info isere"
+//   });
+
+
+//       var infowindow_loire = new google.maps.InfoWindow({
+//       content: "info loire"
+//   });
+
+
+//       var infowindow_rhone = new google.maps.InfoWindow({
+//       content: "info rhone"
+//   });
+
+
+//       var infowindow_savoie = new google.maps.InfoWindow({
+//       content: "info savoie"
+//   });
+
+
+//       var infowindow_haute_savoie = new google.maps.InfoWindow({
+//       content: "info haute_savoie"
+//   });
+
+//   google.maps.event.addListener(marker_ain, 'click', function() {
+//     infowindow_ain.open(map,marker_ain);
+//   });
+
+
+//   google.maps.event.addListener(marker_isere, 'click', function() {
+//     infowindow_isere.open(map,marker_isere);
+//   });
+
+
+//   google.maps.event.addListener(marker_drome, 'click', function() {
+//     infowindow_drome.open(map,marker_drome);
+//   });
+
+
+//   google.maps.event.addListener(marker_haute_savoie, 'click', function() {
+//     infowindow_haute_savoie.open(map,marker_haute_savoie);
+//   });
+
+
+//   google.maps.event.addListener(marker_savoie, 'click', function() {
+//     infowindow_savoie.open(map,marker_savoie);
+//   });
+
+
+//   google.maps.event.addListener(marker_rhone, 'click', function() {
+//     infowindow_rhone.open(map,marker_rhone);
+//   });
+
+
+//   google.maps.event.addListener(marker_ardeche, 'click', function() {
+//     infowindow_ardeche.open(map,marker);
+//   });
+
+
+//   google.maps.event.addListener(marker_loire, 'click', function() {
+//     infowindow_loire.open(map,marker_loire);
+//   });
+
+
+  // google.maps.event.addListener(marker, 'click', function() {
+  //   infowindow.open(map,marker);
+  // });
+
+
+
+  // infowindow.push({key: i, marker: new google.maps.InfoWindow({
+  //       content: "toto" + dept[i][0] })});
+
+  //   google.maps.event.addListener(marker, 'click', function() {
+
+  //         value.marker.open(map,marker);
+
+
+  //   });
+    
+  //   i
+
+
+
+/* --------------------------
+Coordonnées centre départements
+"01" => "46.065375, 5.448974",
+"07" => "44.815342, 4.373790",
+"26" => "44.729651, 5.238637",
+"38" => "45.289696, 5.550697",
+"42" => "45.753789, 4.224511",
+"69" => "45.880356, 4.702795",
+"73" => "45.494388, 6.403594",
+"74" => "46.045179, 6.424750",
+--------------------------------
+*/
+
+  /* -- KML pour affichage des départements -- */
+/* ATTENTION : KML accessible en public ! Voir si ça peut être un problème, 
+sachant qu'ils ne sont utilisés que pour le dessin des départements */
+ // TO DO : un joli truc avec un tableau parce que là c'est moche (éventuellement l'intégrer au précédent)
+ var layers = [];
+  layers[0] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/01.kml', {preserveViewport: true});
+  layers[1] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/07.kml', {preserveViewport: true});
+  layers[2] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/26.kml', {preserveViewport: true});
+  layers[3] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/38.kml', {preserveViewport: true});
+  layers[4] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/42.kml', {preserveViewport: true});
+  layers[5] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/69.kml', {preserveViewport: true});
+  layers[6] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/73.kml', {preserveViewport: true});
+  layers[7] = new google.maps.KmlLayer('http://leguidedelinternaute.com/Dept/74.kml', {preserveViewport: true});
+
+  layers[0].setMap(map);
+  layers[1].setMap(map);
+  layers[2].setMap(map);
+  layers[3].setMap(map);
+  layers[4].setMap(map);
+  layers[5].setMap(map);
+  layers[6].setMap(map);
+  layers[7].setMap(map);
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
 
   </script>
 
